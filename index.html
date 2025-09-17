@@ -22,12 +22,16 @@
   .stages{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
   .stage{padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:#171717;color:var(--ink);cursor:pointer}
   .stage:hover{border-color:var(--brand);color:var(--brand)} .stage.active{background:var(--brand);color:#111;border-color:var(--brand)}
+
+  /* Resultaat-kaarten */
   .kpis{display:grid;gap:12px}
   .kpi{background:#171717;border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;align-items:center;text-align:center}
   .kpi .h{font-size:14px;color:var(--muted);margin-bottom:4px}
   .kpi .v{font:800 28px/1 system-ui;color:var(--brand)}
   .btn{display:inline-block;background:var(--brand);color:#111;font-weight:800;border:0;border-radius:12px;padding:12px 16px;text-decoration:none;margin-top:14px}
   .hint{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.pair{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -52,159 +56,244 @@
     <!-- Rechts: resultaat -->
     <aside class="card right">
       <h2 style="margin:0 0 12px;font-size:18px;color:#fff;text-align:center">Resultaat</h2>
-      <div class="kpis">
-        <div class="kpi"><div class="h">Oud vermogen</div><div class="v" id="oldP">—</div></div>
-        <div class="kpi"><div class="h">Nieuw vermogen</div><div class="v" id="newP">—</div></div>
+      <div class="pair">
+        <div class="kpi"><div class="h">Oud vermogen (pk)</div><div class="v" id="oldP">—</div></div>
+        <div class="kpi"><div class="h">Nieuw vermogen (pk)</div><div class="v" id="newP">—</div></div>
+      </div>
+      <div class="pair">
+        <div class="kpi"><div class="h">Oud koppel (Nm)</div><div class="v" id="oldN">—</div></div>
+        <div class="kpi"><div class="h">Nieuw koppel (Nm)</div><div class="v" id="newN">—</div></div>
       </div>
       <a class="btn" href="mailto:info@midwaycustoms.nl?subject=Offerte%20Chiptuning">Offerte aanvragen</a>
-      <p class="hint">Resultaten zijn indicatief en kunnen afwijken.</p>
+      <p class="hint">Resultaten zijn indicatief; afhankelijk van hardware, conditie en brandstof.</p>
     </aside>
   </div>
 </div>
 
+<!-- ====== LOGICA & DATA-CONTAINER ====== -->
 <script>
-/*
-Dataformaat:
-{ make:"Volkswagen", model:"Golf 7 GTI", engine:"2.0 TSI 220", stock:220,
-  stages:{ "Stage 1":{mode:"delta",hp:50}, "Stage 2":{mode:"delta",hp:80} } }
-mode: "delta" = +pk (absolute winst), "percent" = +% van stock.
-Richtwaarden; echte uitkomst hangt af van hardware/conditie/brandstof.
-*/
-const DATA = [
-/* ===================== VOLKSWAGEN (incl. Caddy & diesels) ===================== */
-{make:"Volkswagen",model:"Up!",engine:"1.0 60",stock:60,stages:{"Stage 1":{mode:"delta",hp:15}}},
-{make:"Volkswagen",model:"Polo 6R GTI",engine:"1.4 TSI 180",stock:180,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:55}}},
-{make:"Volkswagen",model:"Polo AW GTI",engine:"2.0 TSI 200",stock:200,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:65}}},
-{make:"Volkswagen",model:"Golf 4",engine:"1.9 TDI 90",stock:90,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"Volkswagen",model:"Golf 4",engine:"1.9 TDI 110",stock:110,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Volkswagen",model:"Golf 4",engine:"1.8T 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:70}}},
-{make:"Volkswagen",model:"Golf 5",engine:"1.9 TDI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Volkswagen",model:"Golf 5",engine:"2.0 TDI 140",stock:140,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"Volkswagen",model:"Golf 5 GTI",engine:"2.0 TFSI 200",stock:200,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
-{make:"Volkswagen",model:"Golf 5 R32",engine:"3.2 VR6 250",stock:250,stages:{"Stage 1":{mode:"delta",hp:15}}},
-{make:"Volkswagen",model:"Golf 6",engine:"1.6 TDI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Volkswagen",model:"Golf 6",engine:"2.0 TDI 140",stock:140,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"Volkswagen",model:"Golf 6 GTI",engine:"2.0 TSI 211",stock:211,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
-{make:"Volkswagen",model:"Golf 6 R",engine:"2.0 TSI 270",stock:270,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
-{make:"Volkswagen",model:"Golf 7",engine:"1.6 TDI 110",stock:110,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Volkswagen",model:"Golf 7",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"Volkswagen",model:"Golf 7 GTI",engine:"2.0 TSI 220",stock:220,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
-{make:"Volkswagen",model:"Golf 7 GTI Performance",engine:"2.0 TSI 230",stock:230,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
-{make:"Volkswagen",model:"Golf 7.5 GTI TCR",engine:"2.0 TSI 290",stock:290,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
-{make:"Volkswagen",model:"Golf 7 R",engine:"2.0 TSI 300",stock:300,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
-{make:"Volkswagen",model:"Golf 8",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"Volkswagen",model:"Golf 8 GTI",engine:"2.0 TSI 245",stock:245,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
-{make:"Volkswagen",model:"Golf 8 R",engine:"2.0 TSI 320",stock:320,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
-{make:"Volkswagen",model:"Passat B8",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"Volkswagen",model:"Passat B8",engine:"2.0 TDI 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Volkswagen",model:"Arteon",engine:"2.0 TSI 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:70}}},
-{make:"Volkswagen",model:"Tiguan",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"Volkswagen",model:"T-Roc R",engine:"2.0 TSI 300",stock:300,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
-{make:"Volkswagen",model:"Caddy 3",engine:"1.9 TDI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Volkswagen",model:"Caddy 4",engine:"2.0 TDI 102",stock:102,stages:{"Stage 1":{mode:"delta",hp:35}}},
-{make:"Volkswagen",model:"Caddy 4",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"Volkswagen",model:"Caddy 5",engine:"2.0 TDI 122",stock:122,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
+// Globale data-lijst (andere delen zullen DATA.push(...) doen)
+window.DATA = [];
 
-/* ===================== AUDI ===================== */
-{make:"Audi",model:"A1 8X",engine:"1.4 TFSI 122",stock:122,stages:{"Stage 1":{mode:"delta",hp:30}}},
-{make:"Audi",model:"A3 8L",engine:"1.9 TDI 110",stock:110,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Audi",model:"A3 8V",engine:"1.6 TDI 110",stock:110,stages:{"Stage 1":{mode:"delta",hp:25},"Stage 2":{mode:"delta",hp:40}}},
-{make:"Audi",model:"A3 8V",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"Audi",model:"A3 8V",engine:"1.8 TFSI 180",stock:180,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:70}}},
-{make:"Audi",model:"S3 8V",engine:"2.0 TFSI 300",stock:300,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
-{make:"Audi",model:"RS3 8V",engine:"2.5 TFSI 400",stock:400,stages:{"Stage 1":{mode:"delta",hp:70},"Stage 2":{mode:"delta",hp:110}}},
-{make:"Audi",model:"A4 B8",engine:"2.0 TDI 143",stock:143,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Audi",model:"A4 B9",engine:"2.0 TDI 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Audi",model:"A4 B9",engine:"2.0 TFSI 252",stock:252,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
-{make:"Audi",model:"S4 B9",engine:"3.0 TFSI 354",stock:354,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
-{make:"Audi",model:"TT 8J",engine:"2.0 TFSI 200",stock:200,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
-{make:"Audi",model:"TTRS 8S",engine:"2.5 TFSI 400",stock:400,stages:{"Stage 1":{mode:"delta",hp:70},"Stage 2":{mode:"delta",hp:110}}},
-
-/* ===================== SEAT ===================== */
-{make:"SEAT",model:"Ibiza 6J",engine:"1.2 TSI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:25}}},
-{make:"SEAT",model:"Ibiza 6J",engine:"1.6 TDI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:25},"Stage 2":{mode:"delta",hp:40}}},
-{make:"SEAT",model:"Leon 1M",engine:"1.9 TDI 110",stock:110,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"SEAT",model:"Leon 5F",engine:"1.8 TSI 180",stock:180,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:70}}},
-{make:"SEAT",model:"Leon 5F",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"SEAT",model:"Leon 5F FR",engine:"2.0 TSI 220",stock:220,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
-{make:"SEAT",model:"Leon 5F Cupra",engine:"2.0 TSI 290",stock:290,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
-
-/* ===================== ŠKODA ===================== */
-{make:"Škoda",model:"Fabia 5J RS",engine:"1.4 TSI 180",stock:180,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:55}}},
-{make:"Škoda",model:"Octavia 1Z",engine:"1.9 TDI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Škoda",model:"Octavia 5E",engine:"1.6 TDI 105/110",stock:110,stages:{"Stage 1":{mode:"delta",hp:25},"Stage 2":{mode:"delta",hp:40}}},
-{make:"Škoda",model:"Octavia 5E vRS",engine:"2.0 TSI 220",stock:220,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
-{make:"Škoda",model:"Octavia NX vRS",engine:"2.0 TSI 245",stock:245,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
-{make:"Škoda",model:"Superb 3V",engine:"2.0 TDI 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-
-/* ===================== BMW F/G (benzine + diesel) ===================== */
-{make:"BMW",model:"1-Serie F20",engine:"116i 136",stock:136,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:50}}},
-{make:"BMW",model:"1-Serie F20",engine:"118i 170",stock:170,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:55}}},
-{make:"BMW",model:"1-Serie F20",engine:"118d 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"BMW",model:"1-Serie F20",engine:"M135i 320",stock:320,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
-{make:"BMW",model:"1-Serie F20",engine:"M140i 340",stock:340,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
-{make:"BMW",model:"2-Serie F22",engine:"220d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"BMW",model:"2-Serie F22",engine:"M235i 326",stock:326,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
-{make:"BMW",model:"2-Serie F87",engine:"M2 370",stock:370,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
-{make:"BMW",model:"2-Serie F87",engine:"M2 Competition 410",stock:410,stages:{"Stage 1":{mode:"delta",hp:70},"Stage 2":{mode:"delta",hp:110}}},
-{make:"BMW",model:"3-Serie F30",engine:"320i 184",stock:184,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:60}}},
-{make:"BMW",model:"3-Serie F30",engine:"328i 245",stock:245,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
-{make:"BMW",model:"3-Serie F30",engine:"330i 252",stock:252,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
-{make:"BMW",model:"3-Serie F30",engine:"320d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"BMW",model:"3-Serie G20",engine:"320d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"BMW",model:"3-Serie G20",engine:"330d 265",stock:265,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
-{make:"BMW",model:"3-Serie G20",engine:"330i 258",stock:258,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
-{make:"BMW",model:"3-Serie G20",engine:"M340i 374",stock:374,stages:{"Stage 1":{mode:"delta",hp:70},"Stage 2":{mode:"delta",hp:110}}},
-{make:"BMW",model:"4-Serie F32",engine:"420d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"BMW",model:"4-Serie F32",engine:"440i 326",stock:326,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
-{make:"BMW",model:"5-Serie G30",engine:"520d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"BMW",model:"5-Serie G30",engine:"530d 265",stock:265,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
-{make:"BMW",model:"5-Serie G30",engine:"530i 252",stock:252,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
-{make:"BMW",model:"5-Serie G30",engine:"540i 340",stock:340,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
-{make:"BMW",model:"X3 G01",engine:"20d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
-{make:"BMW",model:"X3 G01",engine:"M40i 360",stock:360,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
-
-/* ===================== MINI R50 / R56 / F56 ===================== */
-{make:"MINI",model:"R50",engine:"One 90",stock:90,stages:{"Stage 1":{mode:"delta",hp:12}}},
-{make:"MINI",model:"R50",engine:"Cooper 115",stock:115,stages:{"Stage 1":{mode:"delta",hp:15}}},
-{make:"MINI",model:"R53",engine:"Cooper S 163",stock:163,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"MINI",model:"R56",engine:"Cooper 120",stock:120,stages:{"Stage 1":{mode:"delta",hp:20}}},
-{make:"MINI",model:"R56",engine:"Cooper S 175",stock:175,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:55}}},
-{make:"MINI",model:"R56",engine:"JCW 211",stock:211,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:65}}},
-{make:"MINI",model:"F56",engine:"Cooper 136",stock:136,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:50}}},
-{make:"MINI",model:"F56",engine:"Cooper S 192",stock:192,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:65}}},
-{make:"MINI",model:"F56",engine:"JCW 231",stock:231,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}}
-];
-
-/* ===== UI & LOGICA ===== */
+/* Helpers */
 const $=id=>document.getElementById(id);
 const uniq=a=>[...new Set(a)];
 const byMake=()=>uniq(DATA.map(x=>x.make)).sort((a,b)=>a.localeCompare(b));
-const byModel=m=>uniq(DATA.filter(x=>x.make===m).map(x=>x.model));
-const byEngine=(m,mo)=>DATA.filter(x=>x.make===m&&x.model===mo).map(x=>x.engine);
+const byModel=m=>uniq(DATA.filter(x=>x.make===m).map(x=>x.model)).sort((a,b)=>a.localeCompare(b));
+const byEngine=(m,mo)=>DATA.filter(x=>x.make===m&&x.model===mo).map(x=>x.engine).sort((a,b)=>a.localeCompare(b));
 const getCar=(m,mo,en)=>DATA.find(x=>x.make===m&&x.model===mo&&x.engine===en);
 
-function init(){
+/* UI bouw */
+function buildUI(){
   $("make").innerHTML=byMake().map(v=>`<option>${v}</option>`).join("");
-  $("make").onchange=()=>{ $("model").innerHTML=byModel($("make").value).map(v=>`<option>${v}</option>`).join(""); $("model").dispatchEvent(new Event("change"));};
-  $("model").onchange=()=>{ $("engine").innerHTML=byEngine($("make").value,$("model").value).map(v=>`<option>${v}</option>`).join(""); $("engine").dispatchEvent(new Event("change"));};
-  $("engine").onchange=renderCar; $("make").dispatchEvent(new Event("change"));
+  $("make").onchange=()=>{
+    $("model").innerHTML=byModel($("make").value).map(v=>`<option>${v}</option>`).join("");
+    $("model").dispatchEvent(new Event("change"));
+  };
+  $("model").onchange=()=>{
+    $("engine").innerHTML=byEngine($("make").value,$("model").value).map(v=>`<option>${v}</option>`).join("");
+    $("engine").dispatchEvent(new Event("change"));
+  };
+  $("engine").onchange=renderCar;
+  $("make").dispatchEvent(new Event("change"));
 }
+
 function renderCar(){
   const car=getCar($("make").value,$("model").value,$("engine").value);
-  if(!car)return; $("spec").textContent=`Stock: ${car.stock} pk`;
+  if(!car) return;
+  $("spec").textContent=`Stock: ${car.stock.hp} pk / ${car.stock.nm} Nm`;
   const stagesEl=$("stages"); stagesEl.innerHTML="";
-  Object.keys(car.stages).forEach((name,idx)=>{const chip=document.createElement("div");chip.className="stage"+(idx===0?" active":"");chip.textContent=name;
-    chip.onclick=e=>{[...stagesEl.children].forEach(c=>c.classList.remove("active"));e.currentTarget.classList.add("active");compute(car,name);};
-    stagesEl.appendChild(chip);});
+  Object.keys(car.stages).forEach((name,idx)=>{
+    const chip=document.createElement("div");
+    chip.className="stage"+(idx===0?" active":"");
+    chip.textContent=name;
+    chip.onclick=e=>{
+      [...stagesEl.children].forEach(c=>c.classList.remove("active"));
+      e.currentTarget.classList.add("active");
+      compute(car,name);
+    };
+    stagesEl.appendChild(chip);
+  });
   compute(car,Object.keys(car.stages)[0]);
 }
+
 function compute(car,stageName){
-  const st=car.stages[stageName];
-  const newP = st.mode==="percent" ? Math.round(car.stock*(1+st.hp/100)) : car.stock + st.hp;
-  $("oldP").textContent=car.stock+" pk"; $("newP").textContent=newP+" pk";
+  const st=car.stages[stageName]||{};
+  const hpNew = st.mode==="percent" ? Math.round(car.stock.hp*(1+(st.hp||0)/100)) : car.stock.hp + (st.hp||0);
+  const nmNew = st.mode==="percent" ? Math.round(car.stock.nm*(1+(st.nm||0)/100)) : car.stock.nm + (st.nm||0);
+
+  $("oldP").textContent = car.stock.hp + " pk";
+  $("newP").textContent = hpNew + " pk";
+  $("oldN").textContent = car.stock.nm + " Nm";
+  $("newN").textContent = nmNew + " Nm";
 }
-init();
+
+/* Startfunctie – roep je HELEMAAL ONDERAAN aan nadat alle DATA.push(...) delen geplakt zijn */
+function start(){ buildUI(); }
 </script>
+<!-- 👇 PLAK DEEL 2/3/4 (DATA.push-blokken) HIERONDER, EN ZET HELEMAAL ONDERAAN: <script>start();</script> -->
+  <script>
+// ====== VOLKSWAGEN — Golf / Passat / Tiguan / T-Roc / Arteon (mix benzine & diesel)
+DATA.push(
+  {make:"Volkswagen",model:"Golf 4",engine:"1.9 TDI 90",  stock:{hp:90,  nm:210}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:110}}},
+  {make:"Volkswagen",model:"Golf 4",engine:"1.9 TDI 110", stock:{hp:110, nm:235}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}},
+  {make:"Volkswagen",model:"Golf 4",engine:"1.8T 150",   stock:{hp:150, nm:210}, stages:{"Stage 1":{mode:"delta",hp:40,nm:70},"Stage 2":{mode:"delta",hp:70,nm:120}}},
+
+  {make:"Volkswagen",model:"Golf 5",engine:"1.9 TDI 105", stock:{hp:105, nm:250}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}},
+  {make:"Volkswagen",model:"Golf 5",engine:"2.0 TDI 140", stock:{hp:140, nm:320}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"Volkswagen",model:"Golf 5 GTI",engine:"2.0 TFSI 200",stock:{hp:200,nm:280},stages:{"Stage 1":{mode:"delta",hp:45,nm:80},"Stage 2":{mode:"delta",hp:75,nm:140}}},
+  {make:"Volkswagen",model:"Golf 5 R32",engine:"3.2 VR6 250", stock:{hp:250,nm:320}, stages:{"Stage 1":{mode:"delta",hp:15,nm:20}}},
+
+  {make:"Volkswagen",model:"Golf 6",engine:"1.6 TDI 105", stock:{hp:105, nm:250}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}},
+  {make:"Volkswagen",model:"Golf 6",engine:"2.0 TDI 140", stock:{hp:140, nm:320}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"Volkswagen",model:"Golf 6 GTI",engine:"2.0 TSI 211", stock:{hp:211,nm:280}, stages:{"Stage 1":{mode:"delta",hp:50,nm:90},"Stage 2":{mode:"delta",hp:80,nm:150}}},
+  {make:"Volkswagen",model:"Golf 6 R",engine:"2.0 TSI 270",   stock:{hp:270,nm:350}, stages:{"Stage 1":{mode:"delta",hp:55,nm:90},"Stage 2":{mode:"delta",hp:85,nm:140}}},
+
+  {make:"Volkswagen",model:"Golf 7",engine:"1.6 TDI 110", stock:{hp:110, nm:250}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}},
+  {make:"Volkswagen",model:"Golf 7",engine:"2.0 TDI 150", stock:{hp:150, nm:320}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:110}}},
+  {make:"Volkswagen",model:"Golf 7 GTI",engine:"2.0 TSI 220", stock:{hp:220,nm:350}, stages:{"Stage 1":{mode:"delta",hp:50,nm:80},"Stage 2":{mode:"delta",hp:80,nm:140}}},
+  {make:"Volkswagen",model:"Golf 7 GTI Performance",engine:"2.0 TSI 230", stock:{hp:230,nm:350}, stages:{"Stage 1":{mode:"delta",hp:50,nm:80},"Stage 2":{mode:"delta",hp:80,nm:140}}},
+  {make:"Volkswagen",model:"Golf 7.5 GTI TCR",engine:"2.0 TSI 290", stock:{hp:290,nm:380}, stages:{"Stage 1":{mode:"delta",hp:60,nm:90},"Stage 2":{mode:"delta",hp:90,nm:150}}},
+  {make:"Volkswagen",model:"Golf 7 R",engine:"2.0 TSI 300",    stock:{hp:300,nm:380}, stages:{"Stage 1":{mode:"delta",hp:60,nm:90},"Stage 2":{mode:"delta",hp:90,nm:150}}},
+
+  {make:"Volkswagen",model:"Golf 8",engine:"2.0 TDI 150", stock:{hp:150, nm:360}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"Volkswagen",model:"Golf 8 GTI",engine:"2.0 TSI 245", stock:{hp:245,nm:370}, stages:{"Stage 1":{mode:"delta",hp:45,nm:70},"Stage 2":{mode:"delta",hp:75,nm:120}}},
+  {make:"Volkswagen",model:"Golf 8 R",engine:"2.0 TSI 320",    stock:{hp:320,nm:420}, stages:{"Stage 1":{mode:"delta",hp:55,nm:80},"Stage 2":{mode:"delta",hp:85,nm:130}}},
+
+  {make:"Volkswagen",model:"Passat B8",engine:"2.0 TDI 150", stock:{hp:150, nm:340}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"Volkswagen",model:"Passat B8",engine:"2.0 TDI 190", stock:{hp:190, nm:400}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}},
+
+  {make:"Volkswagen",model:"Tiguan",engine:"2.0 TDI 150", stock:{hp:150, nm:340}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"Volkswagen",model:"T-Roc R",engine:"2.0 TSI 300", stock:{hp:300,nm:400}, stages:{"Stage 1":{mode:"delta",hp:60,nm:90},"Stage 2":{mode:"delta",hp:90,nm:150}}},
+  {make:"Volkswagen",model:"Arteon",engine:"2.0 TSI 190", stock:{hp:190,nm:320}, stages:{"Stage 1":{mode:"delta",hp:40,nm:70},"Stage 2":{mode:"delta",hp:70,nm:120}}}
+);
+
+// ====== VOLKSWAGEN — Caddy 2/3/4/5 (diesel)
+DATA.push(
+  {make:"Volkswagen",model:"Caddy 2",engine:"1.9 SDI 64",  stock:{hp:64, nm:125}, stages:{"Stage 1":{mode:"delta",hp:18,nm:40}}},
+  {make:"Volkswagen",model:"Caddy 2",engine:"1.9 TDI 90",  stock:{hp:90, nm:210}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:100}}},
+
+  {make:"Volkswagen",model:"Caddy 3",engine:"1.9 TDI 105", stock:{hp:105,nm:250}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}},
+  {make:"Volkswagen",model:"Caddy 4",engine:"2.0 TDI 102", stock:{hp:102,nm:250}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70}}},
+  {make:"Volkswagen",model:"Caddy 4",engine:"2.0 TDI 150", stock:{hp:150,nm:340}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"Volkswagen",model:"Caddy 5",engine:"2.0 TDI 122", stock:{hp:122,nm:320}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}}
+);
+
+// ====== VOLKSWAGEN — Transporter T5 / T5.1 / T6 / T6.1 (diesel)
+DATA.push(
+  // T5 (AXB/AXC/BRS, etc.)
+  {make:"Volkswagen",model:"Transporter T5",engine:"1.9 TDI 84", stock:{hp:84, nm:200}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:100}}},
+  {make:"Volkswagen",model:"Transporter T5",engine:"1.9 TDI 102",stock:{hp:102,nm:250}, stages:{"Stage 1":{mode:"delta",hp:28,nm:60},"Stage 2":{mode:"delta",hp:45,nm:100}}},
+  {make:"Volkswagen",model:"Transporter T5",engine:"2.5 TDI 130",stock:{hp:130,nm:340}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:55,nm:120}}},
+  {make:"Volkswagen",model:"Transporter T5",engine:"2.5 TDI 174",stock:{hp:174,nm:400}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:60,nm:130}}},
+
+  // T5.1 (2.0 TDI)
+  {make:"Volkswagen",model:"Transporter T5.1",engine:"2.0 TDI 84", stock:{hp:84, nm:220}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:100}}},
+  {make:"Volkswagen",model:"Transporter T5.1",engine:"2.0 TDI 102",stock:{hp:102,nm:250}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:100}}},
+  {make:"Volkswagen",model:"Transporter T5.1",engine:"2.0 TDI 140",stock:{hp:140,nm:340}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"Volkswagen",model:"Transporter T5.1",engine:"2.0 BiTDI 180",stock:{hp:180,nm:400},stages:{"Stage 1":{mode:"delta",hp:45,nm:80},"Stage 2":{mode:"delta",hp:70,nm:130}}},
+
+  // T6
+  {make:"Volkswagen",model:"Transporter T6",engine:"2.0 TDI 102", stock:{hp:102,nm:250}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:100}}},
+  {make:"Volkswagen",model:"Transporter T6",engine:"2.0 TDI 150", stock:{hp:150,nm:340}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:55,nm:110}}},
+  {make:"Volkswagen",model:"Transporter T6",engine:"2.0 BiTDI 204",stock:{hp:204,nm:450}, stages:{"Stage 1":{mode:"delta",hp:40,nm:70},"Stage 2":{mode:"delta",hp:70,nm:120}}},
+
+  // T6.1
+  {make:"Volkswagen",model:"Transporter T6.1",engine:"2.0 TDI 110", stock:{hp:110,nm:280}, stages:{"Stage 1":{mode:"delta",hp:28,nm:60},"Stage 2":{mode:"delta",hp:45,nm:100}}},
+  {make:"Volkswagen",model:"Transporter T6.1",engine:"2.0 TDI 150", stock:{hp:150,nm:360}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:55,nm:110}}},
+  {make:"Volkswagen",model:"Transporter T6.1",engine:"2.0 BiTDI 204",stock:{hp:204,nm:450}, stages:{"Stage 1":{mode:"delta",hp:40,nm:70},"Stage 2":{mode:"delta",hp:70,nm:120}}}
+);
+</script>
+<script>
+// ====================== AUDI ======================
+DATA.push(
+  {make:"Audi",model:"A1 8X",engine:"1.4 TFSI 122", stock:{hp:122,nm:200}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60}}},
+  {make:"Audi",model:"A3 8L",engine:"1.9 TDI 110",  stock:{hp:110,nm:235}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}},
+  {make:"Audi",model:"A3 8V",engine:"1.6 TDI 110",  stock:{hp:110,nm:250}, stages:{"Stage 1":{mode:"delta",hp:25,nm:50},"Stage 2":{mode:"delta",hp:40,nm:80}}},
+  {make:"Audi",model:"A3 8V",engine:"2.0 TDI 150",  stock:{hp:150,nm:320}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"Audi",model:"A3 8V",engine:"1.8 TFSI 180", stock:{hp:180,nm:250}, stages:{"Stage 1":{mode:"delta",hp:40,nm:70},"Stage 2":{mode:"delta",hp:70,nm:120}}},
+  {make:"Audi",model:"S3 8V",engine:"2.0 TFSI 300", stock:{hp:300,nm:380}, stages:{"Stage 1":{mode:"delta",hp:60,nm:90},"Stage 2":{mode:"delta",hp:90,nm:150}}},
+  {make:"Audi",model:"RS3 8V",engine:"2.5 TFSI 400",stock:{hp:400,nm:480}, stages:{"Stage 1":{mode:"delta",hp:70,nm:100},"Stage 2":{mode:"delta",hp:110,nm:170}}},
+  {make:"Audi",model:"A4 B8",engine:"2.0 TDI 143",  stock:{hp:143,nm:320}, stages:{"Stage 1":{mode:"delta",hp:30,nm:70},"Stage 2":{mode:"delta",hp:45,nm:100}}},
+  {make:"Audi",model:"A4 B9",engine:"2.0 TDI 190",  stock:{hp:190,nm:400}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}},
+  {make:"Audi",model:"A4 B9",engine:"2.0 TFSI 252", stock:{hp:252,nm:370}, stages:{"Stage 1":{mode:"delta",hp:45,nm:70},"Stage 2":{mode:"delta",hp:75,nm:120}}},
+  {make:"Audi",model:"S4 B9",engine:"3.0 TFSI 354", stock:{hp:354,nm:500}, stages:{"Stage 1":{mode:"delta",hp:60,nm:90},"Stage 2":{mode:"delta",hp:90,nm:130}}},
+  {make:"Audi",model:"TT 8J",engine:"2.0 TFSI 200",  stock:{hp:200,nm:280}, stages:{"Stage 1":{mode:"delta",hp:45,nm:80},"Stage 2":{mode:"delta",hp:75,nm:130}}},
+  {make:"Audi",model:"TTRS 8S",engine:"2.5 TFSI 400",stock:{hp:400,nm:480}, stages:{"Stage 1":{mode:"delta",hp:70,nm:100},"Stage 2":{mode:"delta",hp:110,nm:170}}}
+);
+
+// ====================== SEAT ======================
+DATA.push(
+  {make:"SEAT",model:"Ibiza 6J",engine:"1.2 TSI 105",  stock:{hp:105,nm:175}, stages:{"Stage 1":{mode:"delta",hp:25,nm:45}}},
+  {make:"SEAT",model:"Ibiza 6J",engine:"1.6 TDI 105",  stock:{hp:105,nm:250}, stages:{"Stage 1":{mode:"delta",hp:25,nm:50},"Stage 2":{mode:"delta",hp:40,nm:80}}},
+  {make:"SEAT",model:"Leon 1M",engine:"1.9 TDI 110",   stock:{hp:110,nm:235}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}},
+  {make:"SEAT",model:"Leon 5F",engine:"1.8 TSI 180",   stock:{hp:180,nm:250}, stages:{"Stage 1":{mode:"delta",hp:40,nm:70},"Stage 2":{mode:"delta",hp:70,nm:120}}},
+  {make:"SEAT",model:"Leon 5F",engine:"2.0 TDI 150",   stock:{hp:150,nm:320}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"SEAT",model:"Leon 5F FR",engine:"2.0 TSI 220",stock:{hp:220,nm:350}, stages:{"Stage 1":{mode:"delta",hp:50,nm:80},"Stage 2":{mode:"delta",hp:80,nm:140}}},
+  {make:"SEAT",model:"Leon 5F Cupra",engine:"2.0 TSI 290", stock:{hp:290,nm:350}, stages:{"Stage 1":{mode:"delta",hp:60,nm:90},"Stage 2":{mode:"delta",hp:90,nm:150}}}
+);
+
+// ====================== ŠKODA ======================
+DATA.push(
+  {make:"Škoda",model:"Fabia 5J RS",engine:"1.4 TSI 180",   stock:{hp:180,nm:250}, stages:{"Stage 1":{mode:"delta",hp:35,nm:60},"Stage 2":{mode:"delta",hp:55,nm:100}}},
+  {make:"Škoda",model:"Octavia 1Z",engine:"1.9 TDI 105",    stock:{hp:105,nm:250}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}},
+  {make:"Škoda",model:"Octavia 5E",engine:"1.6 TDI 105/110",stock:{hp:110,nm:250}, stages:{"Stage 1":{mode:"delta",hp:25,nm:50},"Stage 2":{mode:"delta",hp:40,nm:80}}},
+  {make:"Škoda",model:"Octavia 5E vRS",engine:"2.0 TSI 220",stock:{hp:220,nm:350}, stages:{"Stage 1":{mode:"delta",hp:50,nm:80},"Stage 2":{mode:"delta",hp:80,nm:140}}},
+  {make:"Škoda",model:"Octavia NX vRS",engine:"2.0 TSI 245",stock:{hp:245,nm:370}, stages:{"Stage 1":{mode:"delta",hp:45,nm:70},"Stage 2":{mode:"delta",hp:75,nm:120}}},
+  {make:"Škoda",model:"Superb 3V",engine:"2.0 TDI 190",     stock:{hp:190,nm:400}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:45,nm:90}}}
+);
+</script>
+<script>
+// ====================== BMW (F/G) ======================
+DATA.push(
+  {make:"BMW",model:"1-Serie F20",engine:"116i 136",  stock:{hp:136,nm:220}, stages:{"Stage 1":{mode:"delta",hp:30,nm:60},"Stage 2":{mode:"delta",hp:50,nm:90}}},
+  {make:"BMW",model:"1-Serie F20",engine:"118i 170",  stock:{hp:170,nm:250}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:55,nm:100}}},
+  {make:"BMW",model:"1-Serie F20",engine:"118d 150",  stock:{hp:150,nm:320}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"BMW",model:"1-Serie F20",engine:"M135i 320", stock:{hp:320,nm:450}, stages:{"Stage 1":{mode:"delta",hp:55,nm:80},"Stage 2":{mode:"delta",hp:85,nm:130}}},
+  {make:"BMW",model:"1-Serie F20",engine:"M140i 340", stock:{hp:340,nm:500}, stages:{"Stage 1":{mode:"delta",hp:60,nm:90},"Stage 2":{mode:"delta",hp:90,nm:130}}},
+
+  {make:"BMW",model:"2-Serie F22",engine:"220d 190",  stock:{hp:190,nm:400}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"BMW",model:"2-Serie F22",engine:"M235i 326", stock:{hp:326,nm:450}, stages:{"Stage 1":{mode:"delta",hp:55,nm:80},"Stage 2":{mode:"delta",hp:85,nm:130}}},
+  {make:"BMW",model:"2-Serie F87",engine:"M2 370",    stock:{hp:370,nm:465}, stages:{"Stage 1":{mode:"delta",hp:60,nm:90},"Stage 2":{mode:"delta",hp:90,nm:130}}},
+  {make:"BMW",model:"2-Serie F87",engine:"M2 Competition 410", stock:{hp:410,nm:550}, stages:{"Stage 1":{mode:"delta",hp:70,nm:100},"Stage 2":{mode:"delta",hp:110,nm:150}}},
+
+  {make:"BMW",model:"3-Serie F30",engine:"320i 184",  stock:{hp:184,nm:270}, stages:{"Stage 1":{mode:"delta",hp:35,nm:60},"Stage 2":{mode:"delta",hp:60,nm:90}}},
+  {make:"BMW",model:"3-Serie F30",engine:"328i 245",  stock:{hp:245,nm:350}, stages:{"Stage 1":{mode:"delta",hp:45,nm:70},"Stage 2":{mode:"delta",hp:70,nm:110}}},
+  {make:"BMW",model:"3-Serie F30",engine:"330i 252",  stock:{hp:252,nm:350}, stages:{"Stage 1":{mode:"delta",hp:45,nm:70},"Stage 2":{mode:"delta",hp:70,nm:110}}},
+  {make:"BMW",model:"3-Serie F30",engine:"320d 190",  stock:{hp:190,nm:400}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+
+  {make:"BMW",model:"3-Serie G20",engine:"320d 190",  stock:{hp:190,nm:400}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"BMW",model:"3-Serie G20",engine:"330d 265",  stock:{hp:265,nm:580}, stages:{"Stage 1":{mode:"delta",hp:45,nm:70},"Stage 2":{mode:"delta",hp:70,nm:110}}},
+  {make:"BMW",model:"3-Serie G20",engine:"330i 258",  stock:{hp:258,nm:400}, stages:{"Stage 1":{mode:"delta",hp:45,nm:70},"Stage 2":{mode:"delta",hp:70,nm:110}}},
+  {make:"BMW",model:"3-Serie G20",engine:"M340i 374", stock:{hp:374,nm:500}, stages:{"Stage 1":{mode:"delta",hp:70,nm:100},"Stage 2":{mode:"delta",hp:110,nm:150}}},
+
+  {make:"BMW",model:"4-Serie F32",engine:"420d 190",  stock:{hp:190,nm:400}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"BMW",model:"4-Serie F32",engine:"440i 326",  stock:{hp:326,nm:450}, stages:{"Stage 1":{mode:"delta",hp:55,nm:80},"Stage 2":{mode:"delta",hp:85,nm:130}}},
+
+  {make:"BMW",model:"5-Serie G30",engine:"520d 190",  stock:{hp:190,nm:400}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"BMW",model:"5-Serie G30",engine:"530d 265",  stock:{hp:265,nm:620}, stages:{"Stage 1":{mode:"delta",hp:45,nm:70},"Stage 2":{mode:"delta",hp:70,nm:110}}},
+  {make:"BMW",model:"5-Serie G30",engine:"530i 252",  stock:{hp:252,nm:350}, stages:{"Stage 1":{mode:"delta",hp:45,nm:70},"Stage 2":{mode:"delta",hp:70,nm:110}}},
+  {make:"BMW",model:"5-Serie G30",engine:"540i 340",  stock:{hp:340,nm:450}, stages:{"Stage 1":{mode:"delta",hp:60,nm:90},"Stage 2":{mode:"delta",hp:90,nm:130}}},
+
+  {make:"BMW",model:"X3 G01",engine:"20d 190",        stock:{hp:190,nm:400}, stages:{"Stage 1":{mode:"delta",hp:35,nm:70},"Stage 2":{mode:"delta",hp:50,nm:100}}},
+  {make:"BMW",model:"X3 G01",engine:"M40i 360",       stock:{hp:360,nm:500}, stages:{"Stage 1":{mode:"delta",hp:60,nm:90},"Stage 2":{mode:"delta",hp:90,nm:130}}}
+);
+
+// ====================== MINI (R50 / R56 / F56) ======================
+DATA.push(
+  {make:"MINI",model:"R50",engine:"One 90",        stock:{hp:90, nm:140}, stages:{"Stage 1":{mode:"delta",hp:12,nm:20}}},
+  {make:"MINI",model:"R50",engine:"Cooper 115",    stock:{hp:115,nm:150}, stages:{"Stage 1":{mode:"delta",hp:15,nm:25}}},
+  {make:"MINI",model:"R53",engine:"Cooper S 163",  stock:{hp:163,nm:210}, stages:{"Stage 1":{mode:"delta",hp:30,nm:50},"Stage 2":{mode:"delta",hp:45,nm:80}}},
+
+  {make:"MINI",model:"R56",engine:"Cooper 120",    stock:{hp:120,nm:160}, stages:{"Stage 1":{mode:"delta",hp:20,nm:30}}},
+  {make:"MINI",model:"R56",engine:"Cooper S 175",  stock:{hp:175,nm:240}, stages:{"Stage 1":{mode:"delta",hp:35,nm:60},"Stage 2":{mode:"delta",hp:55,nm:90}}},
+  {make:"MINI",model:"R56",engine:"JCW 211",       stock:{hp:211,nm:280}, stages:{"Stage 1":{mode:"delta",hp:40,nm:70},"Stage 2":{mode:"delta",hp:65,nm:110}}},
+
+  {make:"MINI",model:"F56",engine:"Cooper 136",    stock:{hp:136,nm:220}, stages:{"Stage 1":{mode:"delta",hp:30,nm:50},"Stage 2":{mode:"delta",hp:50,nm:80}}},
+  {make:"MINI",model:"F56",engine:"Cooper S 192",  stock:{hp:192,nm:280}, stages:{"Stage 1":{mode:"delta",hp:40,nm:70},"Stage 2":{mode:"delta",hp:65,nm:110}}},
+  {make:"MINI",model:"F56",engine:"JCW 231",       stock:{hp:231,nm:320}, stages:{"Stage 1":{mode:"delta",hp:45,nm:70},"Stage 2":{mode:"delta",hp:70,nm:110}}}
+);
+</script>
+<script>start();</script>
 </body>
 </html>
