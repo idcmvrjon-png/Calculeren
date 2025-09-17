@@ -1,96 +1,101 @@
 <!doctype html>
 <html lang="nl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Chiptuning Vermogen/Koppel Calculator</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Midway Customs — Chiptuning Calculator</title>
 <style>
-  body{font-family:sans-serif;margin:20px;background:#0f1115;color:#e7ecf3}
-  h1{color:#4F8EF7}
-  .card{background:#171a21;border-radius:12px;padding:16px;margin-bottom:20px}
-  label{display:block;margin-bottom:6px;font-size:14px;color:#9aa4b2}
-  input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0e1117;color:#fff;margin-bottom:12px}
-  button{background:#4F8EF7;color:#fff;border:0;padding:12px 16px;border-radius:8px;cursor:pointer}
-  .result{margin-top:12px;padding:12px;border:1px solid #333;border-radius:8px;background:#11141b}
-  .kpi{margin:6px 0}
+  :root{
+    --bg:#1a1a1a;      /* antraciet achtergrond */
+    --panel:#262626;   /* donker paneel */
+    --line:#333;
+    --text:#f5f5f5;    /* wit */
+    --muted:#bfbfbf;
+    --brand:#ff6a00;   /* fel oranje */
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,Roboto,Arial}
+  .wrap{max-width:1000px;margin:24px auto;padding:0 16px}
+  header{text-align:center;margin-bottom:20px}
+  header h1{font-size:clamp(24px,4vw,34px);margin:0;color:var(--brand)}
+  header p{color:var(--muted);margin:4px 0 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:20px}
+  label{display:block;color:var(--muted);font-size:14px;margin:8px 0 4px}
+  select{width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:#1e1e1e;color:var(--text)}
+  .stages{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .stage{padding:10px 14px;border-radius:8px;border:1px solid var(--line);cursor:pointer;background:#1e1e1e;color:var(--text);transition:.2s}
+  .stage:hover{border-color:var(--brand);color:var(--brand)}
+  .stage.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .kpis{display:grid;gap:12px;margin-top:14px}
+  .kpi{border:1px solid var(--line);border-radius:10px;padding:12px;background:#1e1e1e}
+  .kpi .h{color:var(--muted);font-size:12px;margin-bottom:4px}
+  .kpi .v{font-weight:700;font-size:20px;color:var(--brand)}
+  .btn{display:inline-block;background:var(--brand);color:#fff;font-weight:600;text-align:center;text-decoration:none;padding:14px 18px;border-radius:10px;margin-top:16px}
 </style>
 </head>
 <body>
-  <h1>🔧 Chiptuning Calculator</h1>
-  
-  <div class="card">
-    <label>Kies auto</label>
-    <select id="carSelect" onchange="fillDefaults()">
-      <option value="">-- Selecteer auto --</option>
-      <option value="golf">Volkswagen Golf 1.9 TDI (110 pk / 235 Nm)</option>
-      <option value="a3">Audi A3 2.0 TDI (140 pk / 320 Nm)</option>
-      <option value="passat">Volkswagen Passat 2.0 TDI (170 pk / 350 Nm)</option>
-      <option value="leon">Seat Leon 1.9 TDI (150 pk / 320 Nm)</option>
-      <option value="octavia">Škoda Octavia 1.6 TDI (105 pk / 250 Nm)</option>
-    </select>
+  <div class="wrap">
+    <header>
+      <h1>Midway Customs</h1>
+      <p>🔧 Klantvriendelijke Chiptuning Calculator</p>
+    </header>
 
-    <label>Stock vermogen (pk)</label>
-    <input type="number" id="stockPower" placeholder="bijv. 150">
-    <label>Winst vermogen (pk of %)</label>
-    <input type="number" id="gainPower" placeholder="bijv. 40 (of %)">
-    
-    <label>Stock koppel (Nm)</label>
-    <input type="number" id="stockTorque" placeholder="bijv. 210">
-    <label>Winst koppel (Nm of %)</label>
-    <input type="number" id="gainTorque" placeholder="bijv. 70 (of %)">
-    
-    <button onclick="calc()">Bereken resultaat</button>
-    
-    <div id="results" class="result" style="display:none">
-      <div class="kpi"><b>Nieuw vermogen:</b> <span id="np"></span></div>
-      <div class="kpi"><b>Nieuw koppel:</b> <span id="nt"></span></div>
-      <div class="kpi"><b>Δ Vermogen:</b> <span id="dp"></span></div>
-      <div class="kpi"><b>Δ Koppel:</b> <span id="dt"></span></div>
-      <div class="kpi"><b>% winst:</b> <span id="pct"></span></div>
-    </div>
+    <section class="card">
+      <label>Kies auto</label>
+      <select id="carSelect" onchange="fillDefaults()">
+        <option value="">-- Selecteer --</option>
+        <option value="golf">Volkswagen Golf 1.9 TDI (110 pk / 235 Nm)</option>
+        <option value="a3">Audi A3 2.0 TDI (140 pk / 320 Nm)</option>
+        <option value="passat">Volkswagen Passat 2.0 TDI (170 pk / 350 Nm)</option>
+        <option value="leon">Seat Leon 1.9 TDI (150 pk / 320 Nm)</option>
+        <option value="octavia">Škoda Octavia 1.6 TDI (105 pk / 250 Nm)</option>
+      </select>
+
+      <label>Stage</label>
+      <div class="stages">
+        <div class="stage" onclick="setStage(1,25,25)">Stage 1</div>
+        <div class="stage" onclick="setStage(2,35,35)">Stage 2</div>
+        <div class="stage" onclick="setStage(3,45,45)">Stage 3</div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="h">Nieuw vermogen</div><div class="v" id="np">–</div></div>
+        <div class="kpi"><div class="h">Nieuw koppel</div><div class="v" id="nt">–</div></div>
+        <div class="kpi"><div class="h">Winst vermogen</div><div class="v" id="dp">–</div></div>
+        <div class="kpi"><div class="h">Winst koppel</div><div class="v" id="dt">–</div></div>
+      </div>
+
+      <a href="mailto:info@midwaycustoms.nl" class="btn">Vraag offerte aan</a>
+    </section>
   </div>
 
 <script>
+let sp=0, st=0;
 function fillDefaults(){
-  const car = document.getElementById('carSelect').value;
-  let sp=0, st=0;
-
+  const car=document.getElementById('carSelect').value;
   switch(car){
     case "golf": sp=110; st=235; break;
     case "a3": sp=140; st=320; break;
     case "passat": sp=170; st=350; break;
     case "leon": sp=150; st=320; break;
     case "octavia": sp=105; st=250; break;
+    default: sp=0; st=0;
   }
-
-  if(sp && st){
-    document.getElementById('stockPower').value=sp;
-    document.getElementById('stockTorque').value=st;
-  }
+  updateResults(0,0);
 }
-
-function calc(){
-  const sp = +document.getElementById('stockPower').value||0;
-  const st = +document.getElementById('stockTorque').value||0;
-  const gp = +document.getElementById('gainPower').value||0;
-  const gt = +document.getElementById('gainTorque').value||0;
-
-  // bepaal of het % of absolute waarden zijn
-  const newP = gp <= 100 && gp < sp ? sp*(1+gp/100) : sp+gp;
-  const newT = gt <= 100 && gt < st ? st*(1+gt/100) : st+gt;
-
-  const dP = newP - sp;
-  const dT = newT - st;
-  const pctP = sp? ((dP/sp)*100).toFixed(1):0;
-  const pctT = st? ((dT/st)*100).toFixed(1):0;
-
-  document.getElementById('np').textContent = Math.round(newP)+" pk";
-  document.getElementById('nt').textContent = Math.round(newT)+" Nm";
-  document.getElementById('dp').textContent = "+"+Math.round(dP)+" pk";
-  document.getElementById('dt').textContent = "+"+Math.round(dT)+" Nm";
-  document.getElementById('pct').textContent = pctP+"% / "+pctT+"%";
-
-  document.getElementById('results').style.display="block";
+function setStage(stage,pctP,pctT){
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  event.target.classList.add('active');
+  updateResults(pctP,pctT);
+}
+function updateResults(pctP,pctT){
+  if(!sp||!st){document.getElementById('np').textContent="–";return;}
+  const newP=sp*(1+pctP/100);
+  const newT=st*(1+pctT/100);
+  document.getElementById('np').textContent=Math.round(newP)+" pk";
+  document.getElementById('nt').textContent=Math.round(newT)+" Nm";
+  document.getElementById('dp').textContent="+"+Math.round(newP-sp)+" pk";
+  document.getElementById('dt').textContent="+"+Math.round(newT-st)+" Nm";
 }
 </script>
 </body>
