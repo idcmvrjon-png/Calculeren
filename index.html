@@ -7,14 +7,91 @@
 <style>
   body{font-family:sans-serif;margin:20px;background:#0f1115;color:#e7ecf3}
   h1{color:#4F8EF7}
+  .card{background:#171a21;border-radius:12px;padding:16px;margin-bottom:20px}
+  label{display:block;margin-bottom:6px;font-size:14px;color:#9aa4b2}
+  input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0e1117;color:#fff;margin-bottom:12px}
+  button{background:#4F8EF7;color:#fff;border:0;padding:12px 16px;border-radius:8px;cursor:pointer}
+  .result{margin-top:12px;padding:12px;border:1px solid #333;border-radius:8px;background:#11141b}
+  .kpi{margin:6px 0}
 </style>
 </head>
 <body>
-<h1>🔧 Chiptuning Calculator</h1>
-<p>Dit is de volledige calculator. Upload dit bestand naar Netlify met "browse to upload".</p>
+  <h1>🔧 Chiptuning Calculator</h1>
+  
+  <div class="card">
+    <label>Kies auto</label>
+    <select id="carSelect" onchange="fillDefaults()">
+      <option value="">-- Selecteer auto --</option>
+      <option value="golf">Volkswagen Golf 1.9 TDI (110 pk / 235 Nm)</option>
+      <option value="a3">Audi A3 2.0 TDI (140 pk / 320 Nm)</option>
+      <option value="passat">Volkswagen Passat 2.0 TDI (170 pk / 350 Nm)</option>
+      <option value="leon">Seat Leon 1.9 TDI (150 pk / 320 Nm)</option>
+      <option value="octavia">Škoda Octavia 1.6 TDI (105 pk / 250 Nm)</option>
+    </select>
+
+    <label>Stock vermogen (pk)</label>
+    <input type="number" id="stockPower" placeholder="bijv. 150">
+    <label>Winst vermogen (pk of %)</label>
+    <input type="number" id="gainPower" placeholder="bijv. 40 (of %)">
+    
+    <label>Stock koppel (Nm)</label>
+    <input type="number" id="stockTorque" placeholder="bijv. 210">
+    <label>Winst koppel (Nm of %)</label>
+    <input type="number" id="gainTorque" placeholder="bijv. 70 (of %)">
+    
+    <button onclick="calc()">Bereken resultaat</button>
+    
+    <div id="results" class="result" style="display:none">
+      <div class="kpi"><b>Nieuw vermogen:</b> <span id="np"></span></div>
+      <div class="kpi"><b>Nieuw koppel:</b> <span id="nt"></span></div>
+      <div class="kpi"><b>Δ Vermogen:</b> <span id="dp"></span></div>
+      <div class="kpi"><b>Δ Koppel:</b> <span id="dt"></span></div>
+      <div class="kpi"><b>% winst:</b> <span id="pct"></span></div>
+    </div>
+  </div>
+
 <script>
-// Hier staat de werkende calculatorcode (vereenvoudigd)
-alert("De volledige calculator draait!");
+function fillDefaults(){
+  const car = document.getElementById('carSelect').value;
+  let sp=0, st=0;
+
+  switch(car){
+    case "golf": sp=110; st=235; break;
+    case "a3": sp=140; st=320; break;
+    case "passat": sp=170; st=350; break;
+    case "leon": sp=150; st=320; break;
+    case "octavia": sp=105; st=250; break;
+  }
+
+  if(sp && st){
+    document.getElementById('stockPower').value=sp;
+    document.getElementById('stockTorque').value=st;
+  }
+}
+
+function calc(){
+  const sp = +document.getElementById('stockPower').value||0;
+  const st = +document.getElementById('stockTorque').value||0;
+  const gp = +document.getElementById('gainPower').value||0;
+  const gt = +document.getElementById('gainTorque').value||0;
+
+  // bepaal of het % of absolute waarden zijn
+  const newP = gp <= 100 && gp < sp ? sp*(1+gp/100) : sp+gp;
+  const newT = gt <= 100 && gt < st ? st*(1+gt/100) : st+gt;
+
+  const dP = newP - sp;
+  const dT = newT - st;
+  const pctP = sp? ((dP/sp)*100).toFixed(1):0;
+  const pctT = st? ((dT/st)*100).toFixed(1):0;
+
+  document.getElementById('np').textContent = Math.round(newP)+" pk";
+  document.getElementById('nt').textContent = Math.round(newT)+" Nm";
+  document.getElementById('dp').textContent = "+"+Math.round(dP)+" pk";
+  document.getElementById('dt').textContent = "+"+Math.round(dT)+" Nm";
+  document.getElementById('pct').textContent = pctP+"% / "+pctT+"%";
+
+  document.getElementById('results').style.display="block";
+}
 </script>
 </body>
 </html>
