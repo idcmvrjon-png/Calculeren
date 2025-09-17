@@ -5,47 +5,42 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Midway Customs — Chiptuning</title>
 <style>
-  :root{--bg:#1a1a1a;--panel:#232323;--panel2:#1e1e1e;--ink:#fff;--muted:#c9c9c9;--brand:#ff6a00;--line:#333;--radius:14px;--shadow:0 10px 30px rgba(0,0,0,.35)}
+  :root{--bg:#1a1a1a;--panel:#232323;--ink:#fff;--muted:#c9c9c9;--brand:#ff6a00;--line:#333;--radius:14px;--shadow:0 10px 30px rgba(0,0,0,.35)}
   *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,Inter,Roboto,Arial}
-  .wrap{max-width:1100px;margin:28px auto;padding:0 16px}
-  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-  .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:44px;height:44px;border-radius:12px;overflow:hidden;background:var(--brand);display:grid;place-items:center;color:#111;font-weight:900}
+  .wrap{max-width:1000px;margin:28px auto;padding:0 16px}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .logo{width:50px;height:50px;border-radius:12px;overflow:hidden;background:var(--brand);display:grid;place-items:center;color:#111;font-weight:900}
   .logo img{width:100%;height:100%;object-fit:contain}
-  .nav{display:flex;gap:14px;color:var(--muted);font-size:14px}
-  .nav a{color:var(--muted);text-decoration:none}.nav a:hover{color:var(--ink)}
-  .bar{height:3px;background:var(--panel2);border-radius:999px;margin:10px 0}
-  .bar .active{height:3px;width:120px;background:var(--brand);border-radius:999px}
+  h1{margin:0;font-size:clamp(22px,3.6vw,30px)} p.sub{margin:2px 0 0;color:var(--muted);font-size:14px}
   .grid{display:grid;gap:18px;grid-template-columns:1.1fr .9fr}
   @media(max-width:860px){.grid{grid-template-columns:1fr}}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
   .left{padding:18px}.right{padding:18px;position:sticky;top:12px;height:fit-content}
-  h1{margin:0;font-size:clamp(22px,3.6vw,30px)} p.sub{margin:2px 0 0;color:var(--muted);font-size:14px}
   label{display:block;color:var(--muted);font-size:13px;margin:10px 0 6px}
   select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#171717;color:var(--ink)}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:12px} @media(max-width:620px){.row{grid-template-columns:1fr}}
   .stages{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
   .stage{padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:#171717;color:var(--ink);cursor:pointer}
   .stage:hover{border-color:var(--brand);color:var(--brand)} .stage.active{background:var(--brand);color:#111;border-color:var(--brand)}
-  .kpis{display:grid;gap:10px}
-  .kpi{background:#171717;border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between}
-  .kpi .h{font-size:12px;color:var(--muted)} .kpi .v{font:800 26px/1 system-ui;color:var(--brand)}
-  .btn{display:inline-block;background:var(--brand);color:#111;font-weight:800;border:0;border-radius:12px;padding:12px 16px;text-decoration:none;margin-top:10px}
-  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  .kpis{display:grid;gap:12px}
+  .kpi{background:#171717;border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .kpi .h{font-size:14px;color:var(--muted);margin-bottom:4px}
+  .kpi .v{font:800 28px/1 system-ui;color:var(--brand)}
+  .btn{display:inline-block;background:var(--brand);color:#111;font-weight:800;border:0;border-radius:12px;padding:12px 16px;text-decoration:none;margin-top:14px}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="brand">
-      <div class="logo" title="Midway Customs"><img src="logo.png" onerror="this.style.display='none';this.parentElement.textContent='MC';" alt="Midway Customs"></div>
-      <div><h1>Midway Customs</h1><p class="sub">Chiptuning — Oud vs nieuw vermogen</p></div>
+    <div class="logo" title="Midway Customs">
+      <img src="logo.png" onerror="this.style.display='none';this.parentElement.textContent='MC';" alt="Midway Customs">
     </div>
-    <nav class="nav"><a href="#">Home</a><a href="#">Tarieven</a><a href="#">Contact</a></nav>
+    <div><h1>Midway Customs</h1><p class="sub">Chiptuning calculator</p></div>
   </header>
-  <div class="bar"><div class="active"></div></div>
 
   <div class="grid">
+    <!-- Links: keuze -->
     <section class="card left">
       <label>Merk</label><select id="make"></select>
       <div class="row">
@@ -56,39 +51,50 @@
       <div id="spec" class="hint">—</div>
     </section>
 
+    <!-- Rechts: resultaat -->
     <aside class="card right">
+      <h2 style="margin:0 0 12px;font-size:18px;color:#fff;text-align:center">Resultaat</h2>
       <div class="kpis">
         <div class="kpi"><div class="h">Oud vermogen</div><div class="v" id="oldP">—</div></div>
         <div class="kpi"><div class="h">Nieuw vermogen</div><div class="v" id="newP">—</div></div>
       </div>
       <a class="btn" href="mailto:info@midwaycustoms.nl?subject=Offerte%20Chiptuning">Offerte aanvragen</a>
-      <p class="hint">Schattingen. Werkelijke resultaten kunnen variëren door staat van de auto, brandstof, hardware en omgeving.</p>
+      <p class="hint">Resultaten zijn indicatief en kunnen afwijken.</p>
     </aside>
   </div>
 </div>
 
 <script>
-/* Formaat per item:
+/*
+Formaat per item:
 { make:"Volkswagen", model:"Golf 7 GTI", engine:"2.0 TSI 220", stock:220,
   stages:{ "Stage 1":{mode:"delta",hp:50}, "Stage 2":{mode:"delta",hp:80} } }
-mode: "delta"= +pk, "percent"= +% van stock. */
+mode: "delta" = +pk (absolute winst), "percent" = +% van stock.
+De cijfers hieronder zijn gangbare richtwaarden; echte uitkomst hangt af van hardware/conditie/brandstof.
+*/
 const DATA = [
-/* ==================== VOLKSWAGEN ==================== */
+/* ===================== VOLKSWAGEN (incl. Caddy & diesels) ===================== */
 {make:"Volkswagen",model:"Up!",engine:"1.0 60",stock:60,stages:{"Stage 1":{mode:"delta",hp:15}}},
 {make:"Volkswagen",model:"Polo 6R GTI",engine:"1.4 TSI 180",stock:180,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:55}}},
 {make:"Volkswagen",model:"Polo AW GTI",engine:"2.0 TSI 200",stock:200,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:65}}},
 {make:"Volkswagen",model:"Golf 4",engine:"1.9 TDI 90",stock:90,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
+{make:"Volkswagen",model:"Golf 4",engine:"1.9 TDI 110",stock:110,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
 {make:"Volkswagen",model:"Golf 4",engine:"1.8T 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:70}}},
+{make:"Volkswagen",model:"Golf 5",engine:"1.9 TDI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
+{make:"Volkswagen",model:"Golf 5",engine:"2.0 TDI 140",stock:140,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
 {make:"Volkswagen",model:"Golf 5 GTI",engine:"2.0 TFSI 200",stock:200,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
 {make:"Volkswagen",model:"Golf 5 R32",engine:"3.2 VR6 250",stock:250,stages:{"Stage 1":{mode:"delta",hp:15}}},
+{make:"Volkswagen",model:"Golf 6",engine:"1.6 TDI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
+{make:"Volkswagen",model:"Golf 6",engine:"2.0 TDI 140",stock:140,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
 {make:"Volkswagen",model:"Golf 6 GTI",engine:"2.0 TSI 211",stock:211,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
 {make:"Volkswagen",model:"Golf 6 R",engine:"2.0 TSI 270",stock:270,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
 {make:"Volkswagen",model:"Golf 7",engine:"1.6 TDI 110",stock:110,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
 {make:"Volkswagen",model:"Golf 7",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
 {make:"Volkswagen",model:"Golf 7 GTI",engine:"2.0 TSI 220",stock:220,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
-{make:"Volkswagen",model:"Golf 7 GTI Perf",engine:"2.0 TSI 230",stock:230,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
+{make:"Volkswagen",model:"Golf 7 GTI Performance",engine:"2.0 TSI 230",stock:230,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
 {make:"Volkswagen",model:"Golf 7.5 GTI TCR",engine:"2.0 TSI 290",stock:290,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
 {make:"Volkswagen",model:"Golf 7 R",engine:"2.0 TSI 300",stock:300,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
+{make:"Volkswagen",model:"Golf 8",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
 {make:"Volkswagen",model:"Golf 8 GTI",engine:"2.0 TSI 245",stock:245,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
 {make:"Volkswagen",model:"Golf 8 R",engine:"2.0 TSI 320",stock:320,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
 {make:"Volkswagen",model:"Passat B8",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
@@ -96,42 +102,50 @@ const DATA = [
 {make:"Volkswagen",model:"Arteon",engine:"2.0 TSI 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:70}}},
 {make:"Volkswagen",model:"Tiguan",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
 {make:"Volkswagen",model:"T-Roc R",engine:"2.0 TSI 300",stock:300,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
+{make:"Volkswagen",model:"Caddy 3",engine:"1.9 TDI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
+{make:"Volkswagen",model:"Caddy 4",engine:"2.0 TDI 102",stock:102,stages:{"Stage 1":{mode:"delta",hp:35}}},
+{make:"Volkswagen",model:"Caddy 4",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
+{make:"Volkswagen",model:"Caddy 5",engine:"2.0 TDI 122",stock:122,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
 
-/* ==================== AUDI ==================== */
+/* ===================== AUDI (benzine & diesel) ===================== */
 {make:"Audi",model:"A1 8X",engine:"1.4 TFSI 122",stock:122,stages:{"Stage 1":{mode:"delta",hp:30}}},
 {make:"Audi",model:"A3 8L",engine:"1.9 TDI 110",stock:110,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
-{make:"Audi",model:"A3 8V",engine:"1.4 TFSI 125",stock:125,stages:{"Stage 1":{mode:"delta",hp:30}}},
-{make:"Audi",model:"A3 8V",engine:"1.8 TFSI 180",stock:180,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:70}}},
+{make:"Audi",model:"A3 8V",engine:"1.6 TDI 110",stock:110,stages:{"Stage 1":{mode:"delta",hp:25},"Stage 2":{mode:"delta",hp:40}}},
 {make:"Audi",model:"A3 8V",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
+{make:"Audi",model:"A3 8V",engine:"1.8 TFSI 180",stock:180,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:70}}},
 {make:"Audi",model:"S3 8V",engine:"2.0 TFSI 300",stock:300,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
 {make:"Audi",model:"RS3 8V",engine:"2.5 TFSI 400",stock:400,stages:{"Stage 1":{mode:"delta",hp:70},"Stage 2":{mode:"delta",hp:110}}},
-{make:"Audi",model:"A4 B8",engine:"2.0 TFSI 211",stock:211,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
-{make:"Audi",model:"A4 B9",engine:"2.0 TFSI 252",stock:252,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
+{make:"Audi",model:"A4 B8",engine:"2.0 TDI 143",stock:143,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
 {make:"Audi",model:"A4 B9",engine:"2.0 TDI 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
+{make:"Audi",model:"A4 B9",engine:"2.0 TFSI 252",stock:252,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
 {make:"Audi",model:"S4 B9",engine:"3.0 TFSI 354",stock:354,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
 {make:"Audi",model:"TT 8J",engine:"2.0 TFSI 200",stock:200,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
-{make:"Audi",model:"TTS 8S",engine:"2.0 TFSI 310",stock:310,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
 {make:"Audi",model:"TTRS 8S",engine:"2.5 TFSI 400",stock:400,stages:{"Stage 1":{mode:"delta",hp:70},"Stage 2":{mode:"delta",hp:110}}},
 
-/* ==================== SEAT ==================== */
+/* ===================== SEAT (benzine & diesel) ===================== */
 {make:"SEAT",model:"Ibiza 6J",engine:"1.2 TSI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:25}}},
+{make:"SEAT",model:"Ibiza 6J",engine:"1.6 TDI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:25},"Stage 2":{mode:"delta",hp:40}}},
 {make:"SEAT",model:"Leon 1M",engine:"1.9 TDI 110",stock:110,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
 {make:"SEAT",model:"Leon 5F",engine:"1.8 TSI 180",stock:180,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:70}}},
+{make:"SEAT",model:"Leon 5F",engine:"2.0 TDI 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
 {make:"SEAT",model:"Leon 5F FR",engine:"2.0 TSI 220",stock:220,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
 {make:"SEAT",model:"Leon 5F Cupra",engine:"2.0 TSI 290",stock:290,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
 
-/* ==================== ŠKODA ==================== */
+/* ===================== ŠKODA (benzine & diesel) ===================== */
 {make:"Škoda",model:"Fabia 5J RS",engine:"1.4 TSI 180",stock:180,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:55}}},
 {make:"Škoda",model:"Octavia 1Z",engine:"1.9 TDI 105",stock:105,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
+{make:"Škoda",model:"Octavia 5E",engine:"1.6 TDI 105/110",stock:110,stages:{"Stage 1":{mode:"delta",hp:25},"Stage 2":{mode:"delta",hp:40}}},
 {make:"Škoda",model:"Octavia 5E vRS",engine:"2.0 TSI 220",stock:220,stages:{"Stage 1":{mode:"delta",hp:50},"Stage 2":{mode:"delta",hp:80}}},
 {make:"Škoda",model:"Octavia NX vRS",engine:"2.0 TSI 245",stock:245,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:75}}},
 {make:"Škoda",model:"Superb 3V",engine:"2.0 TDI 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
 
-/* ==================== BMW (F/G) ==================== */
+/* ===================== BMW F/G (benzine & diesel) ===================== */
 {make:"BMW",model:"1-Serie F20",engine:"116i 136",stock:136,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:50}}},
 {make:"BMW",model:"1-Serie F20",engine:"118i 170",stock:170,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:55}}},
+{make:"BMW",model:"1-Serie F20",engine:"118d 150",stock:150,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
 {make:"BMW",model:"1-Serie F20",engine:"M135i 320",stock:320,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
 {make:"BMW",model:"1-Serie F20",engine:"M140i 340",stock:340,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
+{make:"BMW",model:"2-Serie F22",engine:"220d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
 {make:"BMW",model:"2-Serie F22",engine:"M235i 326",stock:326,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
 {make:"BMW",model:"2-Serie F87",engine:"M2 370",stock:370,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
 {make:"BMW",model:"2-Serie F87",engine:"M2 Competition 410",stock:410,stages:{"Stage 1":{mode:"delta",hp:70},"Stage 2":{mode:"delta",hp:110}}},
@@ -139,15 +153,23 @@ const DATA = [
 {make:"BMW",model:"3-Serie F30",engine:"328i 245",stock:245,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
 {make:"BMW",model:"3-Serie F30",engine:"330i 252",stock:252,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
 {make:"BMW",model:"3-Serie F30",engine:"320d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
+{make:"BMW",model:"3-Serie G20",engine:"320d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
+{make:"BMW",model:"3-Serie G20",engine:"330d 265",stock:265,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
 {make:"BMW",model:"3-Serie G20",engine:"330i 258",stock:258,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
 {make:"BMW",model:"3-Serie G20",engine:"M340i 374",stock:374,stages:{"Stage 1":{mode:"delta",hp:70},"Stage 2":{mode:"delta",hp:110}}},
+{make:"BMW",model:"4-Serie F32",engine:"420d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
 {make:"BMW",model:"4-Serie F32",engine:"440i 326",stock:326,stages:{"Stage 1":{mode:"delta",hp:55},"Stage 2":{mode:"delta",hp:85}}},
 {make:"BMW",model:"5-Serie G30",engine:"520d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
+{make:"BMW",model:"5-Serie G30",engine:"530d 265",stock:265,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
 {make:"BMW",model:"5-Serie G30",engine:"530i 252",stock:252,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}},
 {make:"BMW",model:"5-Serie G30",engine:"540i 340",stock:340,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
+{make:"BMW",model:"X3 G01",engine:"20d 190",stock:190,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:50}}},
 {make:"BMW",model:"X3 G01",engine:"M40i 360",stock:360,stages:{"Stage 1":{mode:"delta",hp:60},"Stage 2":{mode:"delta",hp:90}}},
 
-/* ==================== MINI (R/F) ==================== */
+/* ===================== MINI R50 / R56 / F56 ===================== */
+{make:"MINI",model:"R50",engine:"One 90",stock:90,stages:{"Stage 1":{mode:"delta",hp:12}}},
+{make:"MINI",model:"R50",engine:"Cooper 115",stock:115,stages:{"Stage 1":{mode:"delta",hp:15}}},
+{make:"MINI",model:"R53",engine:"Cooper S 163",stock:163,stages:{"Stage 1":{mode:"delta",hp:30},"Stage 2":{mode:"delta",hp:45}}},
 {make:"MINI",model:"R56",engine:"Cooper 120",stock:120,stages:{"Stage 1":{mode:"delta",hp:20}}},
 {make:"MINI",model:"R56",engine:"Cooper S 175",stock:175,stages:{"Stage 1":{mode:"delta",hp:35},"Stage 2":{mode:"delta",hp:55}}},
 {make:"MINI",model:"R56",engine:"JCW 211",stock:211,stages:{"Stage 1":{mode:"delta",hp:40},"Stage 2":{mode:"delta",hp:65}}},
@@ -156,38 +178,27 @@ const DATA = [
 {make:"MINI",model:"F56",engine:"JCW 231",stock:231,stages:{"Stage 1":{mode:"delta",hp:45},"Stage 2":{mode:"delta",hp:70}}}
 ];
 
-/* ===== UI / LOGICA ===== */
+/* =============== UI & LOGICA =============== */
 const $=id=>document.getElementById(id);
 const uniq=a=>[...new Set(a)];
 const byMake=()=>uniq(DATA.map(x=>x.make)).sort((a,b)=>a.localeCompare(b));
 const byModel=m=>uniq(DATA.filter(x=>x.make===m).map(x=>x.model));
-const byEngine=(m,mo)=>DATA.filter(x=>x.make===m && x.model===mo).map(x=>x.engine);
-const getCar=(m,mo,en)=>DATA.find(x=>x.make===m && x.model===mo && x.engine===en);
+const byEngine=(m,mo)=>DATA.filter(x=>x.make===m&&x.model===mo).map(x=>x.engine);
+const getCar=(m,mo,en)=>DATA.find(x=>x.make===m&&x.model===mo&&x.engine===en);
 
 function init(){
-  $("make").innerHTML = byMake().map(v=>`<option>${v}</option>`).join("");
-  $("make").onchange=()=>{
-    $("model").innerHTML = byModel($("make").value).map(v=>`<option>${v}</option>`).join("");
-    $("model").dispatchEvent(new Event("change"));
-  };
-  $("model").onchange=()=>{
-    $("engine").innerHTML = byEngine($("make").value,$("model").value).map(v=>`<option>${v}</option>`).join("");
-    $("engine").dispatchEvent(new Event("change"));
-  };
-  $("engine").onchange=renderCar;
-  $("make").dispatchEvent(new Event("change"));
+  $("make").innerHTML=byMake().map(v=>`<option>${v}</option>`).join("");
+  $("make").onchange=()=>{ $("model").innerHTML=byModel($("make").value).map(v=>`<option>${v}</option>`).join(""); $("model").dispatchEvent(new Event("change"));};
+  $("model").onchange=()=>{ $("engine").innerHTML=byEngine($("make").value,$("model").value).map(v=>`<option>${v}</option>`).join(""); $("engine").dispatchEvent(new Event("change"));};
+  $("engine").onchange=renderCar; $("make").dispatchEvent(new Event("change"));
 }
 function renderCar(){
   const car=getCar($("make").value,$("model").value,$("engine").value);
-  if(!car) return;
-  $("spec").textContent=`Stock: ${car.stock} pk`;
+  if(!car)return; $("spec").textContent=`Stock: ${car.stock} pk`;
   const stagesEl=$("stages"); stagesEl.innerHTML="";
-  Object.keys(car.stages).forEach((name,idx)=>{
-    const chip=document.createElement("div");
-    chip.className="stage"+(idx===0?" active":""); chip.textContent=name;
-    chip.onclick=e=>{[...stagesEl.children].forEach(c=>c.classList.remove("active")); e.currentTarget.classList.add("active"); compute(car,name);};
-    stagesEl.appendChild(chip);
-  });
+  Object.keys(car.stages).forEach((name,idx)=>{const chip=document.createElement("div");chip.className="stage"+(idx===0?" active":"");chip.textContent=name;
+    chip.onclick=e=>{[...stagesEl.children].forEach(c=>c.classList.remove("active"));e.currentTarget.classList.add("active");compute(car,name);};
+    stagesEl.appendChild(chip);});
   compute(car,Object.keys(car.stages)[0]);
 }
 function compute(car,stageName){
