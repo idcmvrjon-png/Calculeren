@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Midway Customs -Chiptuning</title>
+  <title>Midway Customs – Vermogensoverzicht</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <meta name="color-scheme" content="dark light">
   <style>
     :root{
-      --mc-bg: #111314;       /* antraciet-zwart */
-      --mc-card: #171a1c;     /* kaart-achtergrond */
-      --mc-text: #f7f7f7;     /* bijna-wit */
-      --mc-subtle: #c7c7c7;   /* subtiele tekst */
-      --mc-accent: #ff6a00;   /* oranje */
+      --mc-bg: #111314; /* antraciet-zwart */
+      --mc-card: #171a1c; /* kaart-achtergrond */
+      --mc-text: #f7f7f7; /* bijna-wit */
+      --mc-subtle: #c7c7c7; /* subtiele tekst */
+      --mc-accent: #ff6a00; /* oranje */
       --mc-accent-2: #ff8a33; /* lichtere oranje */
       --ring: 0 0 0 3px rgba(255,106,0,.35);
     }
@@ -28,37 +28,35 @@
   <header class="sticky top-0 z-30 border-b border-white/5 bg-[var(--mc-bg)]/80 backdrop-blur">
     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
       <div class="w-10 h-10 rounded-xl bg-[var(--mc-card)] grid place-items-center ring-1 ring-white/10">
-        <!-- Plaats hier je logo: vervang M door <img src="/pad/naar/logo.svg" class="w-8 h-8" alt="Midway Customs"> -->
+        <!-- Vervang de M door je logo img indien gewenst -->
         <span class="font-black tracking-wider text-[var(--mc-accent)]">M</span>
       </div>
       <div>
         <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Midway Customs</h1>
-        <p class="text-sm text-[var(--mc-subtle)] leading-tight">Vermogensoverzicht – VW Caddy & Transporter (oud pk → nieuw pk)</p>
+        <p class="text-sm text-[var(--mc-subtle)] leading-tight">Vermogensoverzicht (oud pk → nieuw pk)</p>
       </div>
-      <div class="ml-auto flex items-center gap-2">
-        <button id="exportCsv" class="focus-ring inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--mc-accent)] text-black font-semibold hover:opacity-95 active:opacity-90 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M12 16a1 1 0 0 1-.707-.293l-3-3 1.414-1.414L11 12.586V3h2v9.586l1.293-1.293 1.414 1.414-3 3A1 1 0 0 1 12 16Z"/><path d="M5 20h14v-2H5v2Z"/></svg>
-          Exporteer CSV
-        </button>
-      </div>
+      <div class="ml-auto"></div>
     </div>
   </header>
 
   <main class="max-w-7xl mx-auto px-4 py-6">
-    <!-- Info/Disclaimer -->
     <div class="mb-6 p-4 rounded-2xl ring-1 ring-white/10 bg-[var(--mc-card)] mc-gradient">
       <p class="text-sm text-[var(--mc-subtle)]">
-        Waarden zijn <span class="text-[var(--mc-accent)] font-semibold">indicatief voor Stage 1</span> op gezonde motoren met correcte onderhoudsstaat. Werkelijke resultaten
+        Waarden zijn <span class="text-[var(--mc-accent)] font-semibold">indicatief voor Stage 1</span> op gezonde motoren met correcte onderhoudsstaat. Resultaten
         kunnen afwijken op basis van bouwjaar, ECU-software, aandrijflijn en hardware. Vraag voor jouw kenteken een
         <span class="text-[var(--mc-accent-2)]">maatwerkadvies</span>.
       </p>
     </div>
 
     <!-- Filters -->
-    <section class="mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    <section class="mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
       <div>
         <label class="block text-xs text-[var(--mc-subtle)] mb-1">Zoeken</label>
-        <input id="q" type="text" placeholder="Zoek op model / motor / generatie" class="focus-ring w-full px-3 py-2 rounded-xl bg-[var(--mc-card)] ring-1 ring-white/10 placeholder-white/30" />
+        <input id="q" type="text" placeholder="Zoek op merk / model / motor / generatie" class="focus-ring w-full px-3 py-2 rounded-xl bg-[var(--mc-card)] ring-1 ring-white/10 placeholder-white/30" />
+      </div>
+      <div>
+        <label class="block text-xs text-[var(--mc-subtle)] mb-1">Merk</label>
+        <select id="brandFilter" class="focus-ring w-full px-3 py-2 rounded-xl bg-[var(--mc-card)] ring-1 ring-white/10"></select>
       </div>
       <div>
         <label class="block text-xs text-[var(--mc-subtle)] mb-1">Model</label>
@@ -84,9 +82,10 @@
         <table class="min-w-full text-sm table-fixed">
           <thead class="bg-black/40">
             <tr>
-              <th class="px-3 py-3 text-left font-semibold w-[8rem]">Model</th>
-              <th class="px-3 py-3 text-left font-semibold w-[7rem]">Generatie</th>
-              <th class="px-3 py-3 text-left font-semibold w-[9rem]">Motor</th>
+              <th class="px-3 py-3 text-left font-semibold w-[7rem]">Merk</th>
+              <th class="px-3 py-3 text-left font-semibold w-[7rem]">Model</th>
+              <th class="px-3 py-3 text-left font-semibold w-[8rem]">Generatie</th>
+              <th class="px-3 py-3 text-left font-semibold w-[10rem]">Motor</th>
               <th class="px-3 py-3 text-left font-semibold w-[6rem]">Brandstof</th>
               <th class="px-3 py-3 text-left font-semibold w-[6rem]">Oud pk</th>
               <th class="px-3 py-3 text-left font-semibold w-[6rem]">Nieuw pk</th>
@@ -100,208 +99,214 @@
   </main>
 
   <script>
-    // === DATASET ===
-    // Opzet: elk item is één motorvariant met indicatieve Stage 1 waarden.
-    // velden: model, generation, engine, fuel, oldPk, newPk
+    // ===== DATASET =====
+    // velden: brand, model, generation, engine, fuel, oldPk, newPk (indicatieve Stage 1)
     const DATA = [
-      // ===== VW CADDY =====
-      // Caddy 2K (2004–2010)
-      {model:'Caddy', generation:'2K (2004–2010)', engine:'1.6 MPI', fuel:'Benzine', oldPk:102, newPk:112},
-      {model:'Caddy', generation:'2K (2004–2010)', engine:'2.0 SDI', fuel:'Diesel', oldPk:69, newPk:75},
-      {model:'Caddy', generation:'2K (2004–2010)', engine:'1.9 TDI 75', fuel:'Diesel', oldPk:75, newPk:115},
-      {model:'Caddy', generation:'2K (2004–2010)', engine:'1.9 TDI 90', fuel:'Diesel', oldPk:90, newPk:120},
-      {model:'Caddy', generation:'2K (2004–2010)', engine:'1.9 TDI 105', fuel:'Diesel', oldPk:105, newPk:140},
+      // ===== VOLKSWAGEN – CADDY =====
+      {brand:'Volkswagen', model:'Caddy', generation:'2K (2004–2010)', engine:'1.6 MPI', fuel:'Benzine', oldPk:102, newPk:112},
+      {brand:'Volkswagen', model:'Caddy', generation:'2K (2004–2010)', engine:'2.0 SDI', fuel:'Diesel', oldPk:69, newPk:75},
+      {brand:'Volkswagen', model:'Caddy', generation:'2K (2004–2010)', engine:'1.9 TDI 75', fuel:'Diesel', oldPk:75, newPk:115},
+      {brand:'Volkswagen', model:'Caddy', generation:'2K (2004–2010)', engine:'1.9 TDI 90', fuel:'Diesel', oldPk:90, newPk:120},
+      {brand:'Volkswagen', model:'Caddy', generation:'2K (2004–2010)', engine:'1.9 TDI 105', fuel:'Diesel', oldPk:105, newPk:140},
 
-      // Caddy 2K FL (2010–2015)
-      {model:'Caddy', generation:'2K FL (2010–2015)', engine:'1.2 TSI 86', fuel:'Benzine', oldPk:86, newPk:115},
-      {model:'Caddy', generation:'2K FL (2010–2015)', engine:'1.2 TSI 105', fuel:'Benzine', oldPk:105, newPk:135},
-      {model:'Caddy', generation:'2K FL (2010–2015)', engine:'1.6 TDI 75', fuel:'Diesel', oldPk:75, newPk:115},
-      {model:'Caddy', generation:'2K FL (2010–2015)', engine:'1.6 TDI 102', fuel:'Diesel', oldPk:102, newPk:135},
-      {model:'Caddy', generation:'2.0 TDI 110', engine:'2.0 TDI 110', fuel:'Diesel', oldPk:110, newPk:150},
-      {model:'Caddy', generation:'2K FL (2010–2015)', engine:'2.0 TDI 140', fuel:'Diesel', oldPk:140, newPk:180},
+      {brand:'Volkswagen', model:'Caddy', generation:'2K FL (2010–2015)', engine:'1.2 TSI 86', fuel:'Benzine', oldPk:86, newPk:115},
+      {brand:'Volkswagen', model:'Caddy', generation:'2K FL (2010–2015)', engine:'1.2 TSI 105', fuel:'Benzine', oldPk:105, newPk:135},
+      {brand:'Volkswagen', model:'Caddy', generation:'2K FL (2010–2015)', engine:'1.6 TDI 75', fuel:'Diesel', oldPk:75, newPk:115},
+      {brand:'Volkswagen', model:'Caddy', generation:'2K FL (2010–2015)', engine:'1.6 TDI 102', fuel:'Diesel', oldPk:102, newPk:135},
+      {brand:'Volkswagen', model:'Caddy', generation:'2K FL (2010–2015)', engine:'2.0 TDI 110', fuel:'Diesel', oldPk:110, newPk:150},
+      {brand:'Volkswagen', model:'Caddy', generation:'2K FL (2010–2015)', engine:'2.0 TDI 140', fuel:'Diesel', oldPk:140, newPk:180},
 
-      // Caddy 4 (2015–2020)
-      {model:'Caddy', generation:'4 (2015–2020)', engine:'1.0 TSI 102', fuel:'Benzine', oldPk:102, newPk:130},
-      {model:'Caddy', generation:'4 (2015–2020)', engine:'1.4 TSI 125', fuel:'Benzine', oldPk:125, newPk:155},
-      {model:'Caddy', generation:'4 (2015–2020)', engine:'2.0 TDI 75', fuel:'Diesel', oldPk:75, newPk:120},
-      {model:'Caddy', generation:'4 (2015–2020)', engine:'2.0 TDI 102', fuel:'Diesel', oldPk:102, newPk:145},
-      {model:'Caddy', generation:'4 (2015–2020)', engine:'2.0 TDI 122', fuel:'Diesel', oldPk:122, newPk:165},
-      {model:'Caddy', generation:'4 (2015–2020)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      {brand:'Volkswagen', model:'Caddy', generation:'4 (2015–2020)', engine:'1.0 TSI 102', fuel:'Benzine', oldPk:102, newPk:130},
+      {brand:'Volkswagen', model:'Caddy', generation:'4 (2015–2020)', engine:'1.4 TSI 125', fuel:'Benzine', oldPk:125, newPk:155},
+      {brand:'Volkswagen', model:'Caddy', generation:'4 (2015–2020)', engine:'2.0 TDI 75', fuel:'Diesel', oldPk:75, newPk:120},
+      {brand:'Volkswagen', model:'Caddy', generation:'4 (2015–2020)', engine:'2.0 TDI 102', fuel:'Diesel', oldPk:102, newPk:145},
+      {brand:'Volkswagen', model:'Caddy', generation:'4 (2015–2020)', engine:'2.0 TDI 122', fuel:'Diesel', oldPk:122, newPk:165},
+      {brand:'Volkswagen', model:'Caddy', generation:'4 (2015–2020)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
 
-      // Caddy 5 (2020–heden)
-      {model:'Caddy', generation:'5 (2020–heden)', engine:'1.0 TSI 114', fuel:'Benzine', oldPk:114, newPk:140},
-      {model:'Caddy', generation:'5 (2020–heden)', engine:'1.5 TSI 114', fuel:'Benzine', oldPk:114, newPk:150},
-      {model:'Caddy', generation:'5 (2020–heden)', engine:'2.0 TDI 75', fuel:'Diesel', oldPk:75, newPk:120},
-      {model:'Caddy', generation:'5 (2020–heden)', engine:'2.0 TDI 102', fuel:'Diesel', oldPk:102, newPk:145},
-      {model:'Caddy', generation:'5 (2020–heden)', engine:'2.0 TDI 122', fuel:'Diesel', oldPk:122, newPk:170},
-      {model:'Caddy', generation:'5 (2020–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      {brand:'Volkswagen', model:'Caddy', generation:'5 (2020–heden)', engine:'1.0 TSI 114', fuel:'Benzine', oldPk:114, newPk:140},
+      {brand:'Volkswagen', model:'Caddy', generation:'5 (2020–heden)', engine:'1.5 TSI 114', fuel:'Benzine', oldPk:114, newPk:150},
+      {brand:'Volkswagen', model:'Caddy', generation:'5 (2020–heden)', engine:'2.0 TDI 75', fuel:'Diesel', oldPk:75, newPk:120},
+      {brand:'Volkswagen', model:'Caddy', generation:'5 (2020–heden)', engine:'2.0 TDI 102', fuel:'Diesel', oldPk:102, newPk:145},
+      {brand:'Volkswagen', model:'Caddy', generation:'5 (2020–heden)', engine:'2.0 TDI 122', fuel:'Diesel', oldPk:122, newPk:170},
+      {brand:'Volkswagen', model:'Caddy', generation:'5 (2020–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
 
-      // ===== VW TRANSPORTER =====
-      // T4 (1996–2003)
-      {model:'Transporter', generation:'T4 (1996–2003)', engine:'2.5 TDI 88', fuel:'Diesel', oldPk:88, newPk:120},
-      {model:'Transporter', generation:'T4 (1996–2003)', engine:'2.5 TDI 102', fuel:'Diesel', oldPk:102, newPk:135},
-      {model:'Transporter', generation:'T4 (1996–2003)', engine:'2.5 TDI 150', fuel:'Diesel', oldPk:150, newPk:180},
-      {model:'Transporter', generation:'T4 (1996–2003)', engine:'2.4 D 78', fuel:'Diesel', oldPk:78, newPk:88},
-      {model:'Transporter', generation:'T4 (1996–2003)', engine:'2.0 Benzine', fuel:'Benzine', oldPk:115, newPk:125},
+      // ===== VOLKSWAGEN – TRANSPORTER =====
+      {brand:'Volkswagen', model:'Transporter', generation:'T4 (1996–2003)', engine:'2.5 TDI 88', fuel:'Diesel', oldPk:88, newPk:120},
+      {brand:'Volkswagen', model:'Transporter', generation:'T4 (1996–2003)', engine:'2.5 TDI 102', fuel:'Diesel', oldPk:102, newPk:135},
+      {brand:'Volkswagen', model:'Transporter', generation:'T4 (1996–2003)', engine:'2.5 TDI 150', fuel:'Diesel', oldPk:150, newPk:180},
+      {brand:'Volkswagen', model:'Transporter', generation:'T4 (1996–2003)', engine:'2.4 D 78', fuel:'Diesel', oldPk:78, newPk:88},
+      {brand:'Volkswagen', model:'Transporter', generation:'T4 (1996–2003)', engine:'2.0 Benzine', fuel:'Benzine', oldPk:115, newPk:125},
 
-      // T5 (2003–2009)
-      {model:'Transporter', generation:'T5 (2003–2009)', engine:'1.9 TDI 84', fuel:'Diesel', oldPk:84, newPk:125},
-      {model:'Transporter', generation:'T5 (2003–2009)', engine:'1.9 TDI 102', fuel:'Diesel', oldPk:102, newPk:140},
-      {model:'Transporter', generation:'T5 (2003–2009)', engine:'2.5 TDI 131', fuel:'Diesel', oldPk:131, newPk:160},
-      {model:'Transporter', generation:'T5 (2003–2009)', engine:'2.5 TDI 174', fuel:'Diesel', oldPk:174, newPk:200},
+      {brand:'Volkswagen', model:'Transporter', generation:'T5 (2003–2009)', engine:'1.9 TDI 84', fuel:'Diesel', oldPk:84, newPk:125},
+      {brand:'Volkswagen', model:'Transporter', generation:'T5 (2003–2009)', engine:'1.9 TDI 102', fuel:'Diesel', oldPk:102, newPk:140},
+      {brand:'Volkswagen', model:'Transporter', generation:'T5 (2003–2009)', engine:'2.5 TDI 131', fuel:'Diesel', oldPk:131, newPk:160},
+      {brand:'Volkswagen', model:'Transporter', generation:'T5 (2003–2009)', engine:'2.5 TDI 174', fuel:'Diesel', oldPk:174, newPk:200},
 
-      // T5.1 (2010–2015)
-      {model:'Transporter', generation:'T5.1 (2010–2015)', engine:'2.0 TDI 84', fuel:'Diesel', oldPk:84, newPk:125},
-      {model:'Transporter', generation:'T5.1 (2010–2015)', engine:'2.0 TDI 102', fuel:'Diesel', oldPk:102, newPk:145},
-      {model:'Transporter', generation:'T5.1 (2010–2015)', engine:'2.0 TDI 140', fuel:'Diesel', oldPk:140, newPk:180},
-      {model:'Transporter', generation:'T5.1 (2010–2015)', engine:'2.0 BiTDI 180', fuel:'Diesel', oldPk:180, newPk:220},
+      {brand:'Volkswagen', model:'Transporter', generation:'T5.1 (2010–2015)', engine:'2.0 TDI 84', fuel:'Diesel', oldPk:84, newPk:125},
+      {brand:'Volkswagen', model:'Transporter', generation:'T5.1 (2010–2015)', engine:'2.0 TDI 102', fuel:'Diesel', oldPk:102, newPk:145},
+      {brand:'Volkswagen', model:'Transporter', generation:'T5.1 (2010–2015)', engine:'2.0 TDI 140', fuel:'Diesel', oldPk:140, newPk:180},
+      {brand:'Volkswagen', model:'Transporter', generation:'T5.1 (2010–2015)', engine:'2.0 BiTDI 180', fuel:'Diesel', oldPk:180, newPk:220},
 
-      // T6 (2015–2019)
-      {model:'Transporter', generation:'T6 (2015–2019)', engine:'2.0 TDI 84', fuel:'Diesel', oldPk:84, newPk:130},
-      {model:'Transporter', generation:'T6 (2015–2019)', engine:'2.0 TDI 102', fuel:'Diesel', oldPk:102, newPk:145},
-      {model:'Transporter', generation:'T6 (2015–2019)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
-      {model:'Transporter', generation:'T6 (2015–2019)', engine:'2.0 BiTDI 204', fuel:'Diesel', oldPk:204, newPk:235},
-      {model:'Transporter', generation:'T6 (2015–2019)', engine:'2.0 TSI 204', fuel:'Benzine', oldPk:204, newPk:250},
+      {brand:'Volkswagen', model:'Transporter', generation:'T6 (2015–2019)', engine:'2.0 TDI 84', fuel:'Diesel', oldPk:84, newPk:130},
+      {brand:'Volkswagen', model:'Transporter', generation:'T6 (2015–2019)', engine:'2.0 TDI 102', fuel:'Diesel', oldPk:102, newPk:145},
+      {brand:'Volkswagen', model:'Transporter', generation:'T6 (2015–2019)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      {brand:'Volkswagen', model:'Transporter', generation:'T6 (2015–2019)', engine:'2.0 BiTDI 204', fuel:'Diesel', oldPk:204, newPk:235},
+      {brand:'Volkswagen', model:'Transporter', generation:'T6 (2015–2019)', engine:'2.0 TSI 204', fuel:'Benzine', oldPk:204, newPk:250},
 
-      // T6.1 (2019–heden)
-      {model:'Transporter', generation:'T6.1 (2019–heden)', engine:'2.0 TDI 90', fuel:'Diesel', oldPk:90, newPk:135},
-      {model:'Transporter', generation:'T6.1 (2019–heden)', engine:'2.0 TDI 110', fuel:'Diesel', oldPk:110, newPk:150},
-      {model:'Transporter', generation:'T6.1 (2019–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
-      {model:'Transporter', generation:'T6.1 (2019–heden)', engine:'2.0 BiTDI 204', fuel:'Diesel', oldPk:204, newPk:235},
+      {brand:'Volkswagen', model:'Transporter', generation:'T6.1 (2019–heden)', engine:'2.0 TDI 90', fuel:'Diesel', oldPk:90, newPk:135},
+      {brand:'Volkswagen', model:'Transporter', generation:'T6.1 (2019–heden)', engine:'2.0 TDI 110', fuel:'Diesel', oldPk:110, newPk:150},
+      {brand:'Volkswagen', model:'Transporter', generation:'T6.1 (2019–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      {brand:'Volkswagen', model:'Transporter', generation:'T6.1 (2019–heden)', engine:'2.0 BiTDI 204', fuel:'Diesel', oldPk:204, newPk:235},
 
-      // T7 Multivan (2021–heden)
-      {model:'Transporter', generation:'T7 Multivan (2021–heden)', engine:'1.5 TSI', fuel:'Benzine', oldPk:136, newPk:170},
-      {model:'Transporter', generation:'T7 Multivan (2021–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
-      {model:'Transporter', generation:'T7 Multivan (2021–heden)', engine:'2.0 TSI 204', fuel:'Benzine', oldPk:204, newPk:250},
-      {model:'Transporter', generation:'T7 eHybrid (2021–heden)', engine:'1.4 eHybrid', fuel:'Hybride', oldPk:218, newPk:250},
+      {brand:'Volkswagen', model:'Transporter', generation:'T7 Multivan (2021–heden)', engine:'1.5 TSI', fuel:'Benzine', oldPk:136, newPk:170},
+      {brand:'Volkswagen', model:'Transporter', generation:'T7 Multivan (2021–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      {brand:'Volkswagen', model:'Transporter', generation:'T7 Multivan (2021–heden)', engine:'2.0 TSI 204', fuel:'Benzine', oldPk:204, newPk:250},
+      {brand:'Volkswagen', model:'Transporter', generation:'T7 eHybrid (2021–heden)', engine:'1.4 eHybrid', fuel:'Hybride', oldPk:218, newPk:250},
 
-      // ===== VW GOLF (populaire) =====
-      {model:'Golf', generation:'Mk5 (2003–2008)', engine:'1.9 TDI 105', fuel:'Diesel', oldPk:105, newPk:140},
-      {model:'Golf', generation:'Mk6 (2008–2012)', engine:'2.0 TDI 110', fuel:'Diesel', oldPk:110, newPk:150},
-      {model:'Golf', generation:'Mk6 (2008–2012)', engine:'2.0 TDI 140', fuel:'Diesel', oldPk:140, newPk:180},
-      {model:'Golf', generation:'Mk7 (2012–2019)', engine:'1.6 TDI 105', fuel:'Diesel', oldPk:105, newPk:140},
-      {model:'Golf', generation:'Mk7 (2012–2019)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
-      {model:'Golf', generation:'Mk7 (2012–2019)', engine:'1.4 TSI 122', fuel:'Benzine', oldPk:122, newPk:155},
-      {model:'Golf', generation:'Mk7 (2012–2019)', engine:'1.5 TSI 130', fuel:'Benzine', oldPk:130, newPk:165},
-      {model:'Golf', generation:'Mk8 (2019–heden)', engine:'1.5 TSI 150', fuel:'Benzine', oldPk:150, newPk:185},
-      {model:'Golf', generation:'Mk8 (2019–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      // ===== VOLKSWAGEN – POPULAIR =====
+      {brand:'Volkswagen', model:'Golf', generation:'Mk5 (2003–2008)', engine:'1.9 TDI 105', fuel:'Diesel', oldPk:105, newPk:140},
+      {brand:'Volkswagen', model:'Golf', generation:'Mk6 (2008–2012)', engine:'2.0 TDI 110', fuel:'Diesel', oldPk:110, newPk:150},
+      {brand:'Volkswagen', model:'Golf', generation:'Mk6 (2008–2012)', engine:'2.0 TDI 140', fuel:'Diesel', oldPk:140, newPk:180},
+      {brand:'Volkswagen', model:'Golf', generation:'Mk7 (2012–2019)', engine:'1.6 TDI 105', fuel:'Diesel', oldPk:105, newPk:140},
+      {brand:'Volkswagen', model:'Golf', generation:'Mk7 (2012–2019)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      {brand:'Volkswagen', model:'Golf', generation:'Mk7 (2012–2019)', engine:'1.4 TSI 122', fuel:'Benzine', oldPk:122, newPk:155},
+      {brand:'Volkswagen', model:'Golf', generation:'Mk7 (2012–2019)', engine:'1.5 TSI 130', fuel:'Benzine', oldPk:130, newPk:165},
+      {brand:'Volkswagen', model:'Golf', generation:'Mk8 (2019–heden)', engine:'1.5 TSI 150', fuel:'Benzine', oldPk:150, newPk:185},
+      {brand:'Volkswagen', model:'Golf', generation:'Mk8 (2019–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
 
-      // ===== VW POLO =====
-      {model:'Polo', generation:'6R (2009–2014)', engine:'1.6 TDI 90', fuel:'Diesel', oldPk:90, newPk:125},
-      {model:'Polo', generation:'6C (2014–2017)', engine:'1.2 TSI 90', fuel:'Benzine', oldPk:90, newPk:125},
-      {model:'Polo', generation:'AW (2017–heden)', engine:'1.0 TSI 95', fuel:'Benzine', oldPk:95, newPk:120},
-      {model:'Polo', generation:'AW (2017–heden)', engine:'1.0 TSI 110', fuel:'Benzine', oldPk:110, newPk:135},
+      {brand:'Volkswagen', model:'Polo', generation:'6R (2009–2014)', engine:'1.6 TDI 90', fuel:'Diesel', oldPk:90, newPk:125},
+      {brand:'Volkswagen', model:'Polo', generation:'6C (2014–2017)', engine:'1.2 TSI 90', fuel:'Benzine', oldPk:90, newPk:125},
+      {brand:'Volkswagen', model:'Polo', generation:'AW (2017–heden)', engine:'1.0 TSI 95', fuel:'Benzine', oldPk:95, newPk:120},
+      {brand:'Volkswagen', model:'Polo', generation:'AW (2017–heden)', engine:'1.0 TSI 110', fuel:'Benzine', oldPk:110, newPk:135},
 
-      // ===== AUDI A3 / A4 =====
-      {model:'Audi A3', generation:'8P (2003–2012)', engine:'2.0 TDI 140', fuel:'Diesel', oldPk:140, newPk:180},
-      {model:'Audi A3', generation:'8V (2012–2020)', engine:'1.6 TDI 110', fuel:'Diesel', oldPk:110, newPk:145},
-      {model:'Audi A3', generation:'8V (2012–2020)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
-      {model:'Audi A3', generation:'8V (2012–2020)', engine:'1.4 TFSI 125', fuel:'Benzine', oldPk:125, newPk:160},
-      {model:'Audi A3', generation:'8Y (2020–heden)', engine:'1.5 TFSI 150', fuel:'Benzine', oldPk:150, newPk:185},
-      {model:'Audi A4', generation:'B8 (2008–2015)', engine:'2.0 TDI 136', fuel:'Diesel', oldPk:136, newPk:180},
-      {model:'Audi A4', generation:'B8 (2008–2015)', engine:'2.0 TDI 163', fuel:'Diesel', oldPk:163, newPk:200},
-      {model:'Audi A4', generation:'B9 (2015–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      {brand:'Volkswagen', model:'Passat', generation:'B7 (2010–2014)', engine:'2.0 TDI 140', fuel:'Diesel', oldPk:140, newPk:180},
+      {brand:'Volkswagen', model:'Passat', generation:'B8 (2014–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
 
-      // ===== SEAT LEON =====
-      {model:'Seat Leon', generation:'Mk2 (2005–2012)', engine:'1.9 TDI 105', fuel:'Diesel', oldPk:105, newPk:140},
-      {model:'Seat Leon', generation:'Mk3 (2012–2020)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
-      {model:'Seat Leon', generation:'Mk4 (2020–heden)', engine:'1.5 TSI 150', fuel:'Benzine', oldPk:150, newPk:185},
+      // ===== AUDI =====
+      {brand:'Audi', model:'A3', generation:'8P (2003–2012)', engine:'2.0 TDI 140', fuel:'Diesel', oldPk:140, newPk:180},
+      {brand:'Audi', model:'A3', generation:'8V (2012–2020)', engine:'1.6 TDI 110', fuel:'Diesel', oldPk:110, newPk:145},
+      {brand:'Audi', model:'A3', generation:'8V (2012–2020)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      {brand:'Audi', model:'A3', generation:'8V (2012–2020)', engine:'1.4 TFSI 125', fuel:'Benzine', oldPk:125, newPk:160},
+      {brand:'Audi', model:'A3', generation:'8Y (2020–heden)', engine:'1.5 TFSI 150', fuel:'Benzine', oldPk:150, newPk:185},
 
-      // ===== SKODA OCTAVIA =====
-      {model:'Škoda Octavia', generation:'Mk2 (2004–2013)', engine:'1.9 TDI 105', fuel:'Diesel', oldPk:105, newPk:140},
-      {model:'Škoda Octavia', generation:'Mk3 (2013–2020)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
-      {model:'Škoda Octavia', generation:'Mk4 (2020–heden)', engine:'1.5 TSI 150', fuel:'Benzine', oldPk:150, newPk:185},
+      {brand:'Audi', model:'A4', generation:'B8 (2008–2015)', engine:'2.0 TDI 136', fuel:'Diesel', oldPk:136, newPk:180},
+      {brand:'Audi', model:'A4', generation:'B8 (2008–2015)', engine:'2.0 TDI 163', fuel:'Diesel', oldPk:163, newPk:200},
+      {brand:'Audi', model:'A4', generation:'B9 (2015–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
 
-      // ===== BMW 1/3 SERIE =====
-      {model:'BMW 1-serie', generation:'E87 (2004–2011)', engine:'118d', fuel:'Diesel', oldPk:122, newPk:160},
-      {model:'BMW 1-serie', generation:'F20 (2011–2019)', engine:'116d', fuel:'Diesel', oldPk:116, newPk:150},
-      {model:'BMW 1-serie', generation:'F20 (2011–2019)', engine:'120d', fuel:'Diesel', oldPk:184, newPk:215},
-      {model:'BMW 3-serie', generation:'E90 (2005–2012)', engine:'320d', fuel:'Diesel', oldPk:163, newPk:200},
-      {model:'BMW 3-serie', generation:'F30 (2012–2019)', engine:'320d', fuel:'Diesel', oldPk:184, newPk:220},
-      {model:'BMW 3-serie', generation:'F30 (2012–2019)', engine:'328i', fuel:'Benzine', oldPk:245, newPk:270},
+      {brand:'Audi', model:'A6', generation:'C7 (2011–2018)', engine:'2.0 TDI 177', fuel:'Diesel', oldPk:177, newPk:210},
 
-      // ===== MERCEDES A/C/E =====
-      {model:'Mercedes A-klasse', generation:'W176 (2012–2018)', engine:'A180 CDI', fuel:'Diesel', oldPk:109, newPk:145},
-      {model:'Mercedes A-klasse', generation:'W176 (2012–2018)', engine:'A200', fuel:'Benzine', oldPk:156, newPk:190},
-      {model:'Mercedes C-klasse', generation:'W204 (2007–2014)', engine:'C220 CDI', fuel:'Diesel', oldPk:170, newPk:205},
-      {model:'Mercedes C-klasse', generation:'W205 (2014–2021)', engine:'C220d', fuel:'Diesel', oldPk:170, newPk:205},
-      {model:'Mercedes E-klasse', generation:'W212 (2009–2016)', engine:'E220 CDI', fuel:'Diesel', oldPk:170, newPk:205},
+      // ===== SEAT =====
+      {brand:'SEAT', model:'Leon', generation:'Mk2 (2005–2012)', engine:'1.9 TDI 105', fuel:'Diesel', oldPk:105, newPk:140},
+      {brand:'SEAT', model:'Leon', generation:'Mk3 (2012–2020)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      {brand:'SEAT', model:'Leon', generation:'Mk4 (2020–heden)', engine:'1.5 TSI 150', fuel:'Benzine', oldPk:150, newPk:185},
 
-      // ===== FORD FIESTA/FOCUS =====
-      {model:'Ford Fiesta', generation:'Mk7 (2008–2017)', engine:'1.0 EcoBoost 100', fuel:'Benzine', oldPk:100, newPk:135},
-      {model:'Ford Focus', generation:'Mk3 (2011–2018)', engine:'1.0 EcoBoost 125', fuel:'Benzine', oldPk:125, newPk:155},
-      {model:'Ford Focus', generation:'Mk3 (2011–2018)', engine:'1.6 TDCi 115', fuel:'Diesel', oldPk:115, newPk:145},
-      {model:'Ford Focus', generation:'Mk4 (2018–heden)', engine:'1.5 EcoBlue 120', fuel:'Diesel', oldPk:120, newPk:150},
+      // ===== ŠKODA =====
+      {brand:'Škoda', model:'Octavia', generation:'Mk2 (2004–2013)', engine:'1.9 TDI 105', fuel:'Diesel', oldPk:105, newPk:140},
+      {brand:'Škoda', model:'Octavia', generation:'Mk3 (2013–2020)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
+      {brand:'Škoda', model:'Octavia', generation:'Mk4 (2020–heden)', engine:'1.5 TSI 150', fuel:'Benzine', oldPk:150, newPk:185},
 
-      // ===== OPEL ASTRA =====
-      {model:'Opel Astra', generation:'J (2009–2015)', engine:'1.4 Turbo 140', fuel:'Benzine', oldPk:140, newPk:175},
-      {model:'Opel Astra', generation:'K (2015–2021)', engine:'1.6 CDTI 136', fuel:'Diesel', oldPk:136, newPk:170},
+      // ===== BMW =====
+      {brand:'BMW', model:'1-serie', generation:'E87 (2004–2011)', engine:'118d 2.0', fuel:'Diesel', oldPk:122, newPk:160},
+      {brand:'BMW', model:'1-serie', generation:'F20 (2011–2019)', engine:'116d 1.6/2.0', fuel:'Diesel', oldPk:116, newPk:150},
+      {brand:'BMW', model:'1-serie', generation:'F20 (2011–2019)', engine:'120d 2.0', fuel:'Diesel', oldPk:184, newPk:215},
 
-      // ===== PEUGEOT 308 =====
-      {model:'Peugeot 308', generation:'T9 (2013–2021)', engine:'1.6 BlueHDi 120', fuel:'Diesel', oldPk:120, newPk:155},
-      {model:'Peugeot 308', generation:'T9 (2013–2021)', engine:'1.2 PureTech 130', fuel:'Benzine', oldPk:130, newPk:155},
+      {brand:'BMW', model:'3-serie', generation:'E90 (2005–2012)', engine:'320d 2.0', fuel:'Diesel', oldPk:163, newPk:200},
+      {brand:'BMW', model:'3-serie', generation:'F30 (2012–2019)', engine:'320d 2.0', fuel:'Diesel', oldPk:184, newPk:220},
+      {brand:'BMW', model:'3-serie', generation:'F30 (2012–2019)', engine:'328i 2.0T', fuel:'Benzine', oldPk:245, newPk:270},
 
-      // ===== RENAULT CLIO / MEGANE =====
-      {model:'Renault Clio', generation:'IV (2012–2019)', engine:'0.9 TCe 90', fuel:'Benzine', oldPk:90, newPk:110},
-      {model:'Renault Clio', generation:'IV (2012–2019)', engine:'1.5 dCi 90', fuel:'Diesel', oldPk:90, newPk:120},
-      {model:'Renault Mégane', generation:'III (2008–2016)', engine:'1.5 dCi 110', fuel:'Diesel', oldPk:110, newPk:140},
-      {model:'Renault Mégane', generation:'IV (2016–2020)', engine:'1.3 TCe 140', fuel:'Benzine', oldPk:140, newPk:170},
+      {brand:'BMW', model:'5-serie', generation:'F10 (2010–2017)', engine:'520d 2.0', fuel:'Diesel', oldPk:184, newPk:220},
 
-      // ===== VOLVO V40 / V60 =====
-      {model:'Volvo V40', generation:'P1 (2012–2019)', engine:'D2 1.6', fuel:'Diesel', oldPk:115, newPk:145},
-      {model:'Volvo V40', generation:'P1 (2012–2019)', engine:'D3 2.0', fuel:'Diesel', oldPk:150, newPk:185},
-      {model:'Volvo V60', generation:'P3 (2010–2018)', engine:'D4 2.0', fuel:'Diesel', oldPk:181, newPk:210},
-      {model:'Volvo V60', generation:'SPA (2018–heden)', engine:'T5 2.0', fuel:'Benzine', oldPk:250, newPk:290},
+      // ===== MERCEDES-BENZ =====
+      {brand:'Mercedes-Benz', model:'A-klasse', generation:'W176 (2012–2018)', engine:'A180 CDI', fuel:'Diesel', oldPk:109, newPk:145},
+      {brand:'Mercedes-Benz', model:'A-klasse', generation:'W176 (2012–2018)', engine:'A200', fuel:'Benzine', oldPk:156, newPk:190},
+
+      {brand:'Mercedes-Benz', model:'C-klasse', generation:'W204 (2007–2014)', engine:'C220 CDI', fuel:'Diesel', oldPk:170, newPk:205},
+      {brand:'Mercedes-Benz', model:'C-klasse', generation:'W205 (2014–2021)', engine:'C220d', fuel:'Diesel', oldPk:170, newPk:205},
+
+      {brand:'Mercedes-Benz', model:'E-klasse', generation:'W212 (2009–2016)', engine:'E220 CDI', fuel:'Diesel', oldPk:170, newPk:205},
+
+      {brand:'Mercedes-Benz', model:'Sprinter', generation:'906 (2006–2018)', engine:'2.1 CDI 129', fuel:'Diesel', oldPk:129, newPk:165},
+      {brand:'Mercedes-Benz', model:'Sprinter', generation:'907 (2018–heden)', engine:'2.1 CDI 163', fuel:'Diesel', oldPk:163, newPk:200},
+
+      // ===== FORD =====
+      {brand:'Ford', model:'Fiesta', generation:'Mk7 (2008–2017)', engine:'1.0 EcoBoost 100', fuel:'Benzine', oldPk:100, newPk:135},
+      {brand:'Ford', model:'Focus', generation:'Mk3 (2011–2018)', engine:'1.0 EcoBoost 125', fuel:'Benzine', oldPk:125, newPk:155},
+      {brand:'Ford', model:'Focus', generation:'Mk3 (2011–2018)', engine:'1.6 TDCi 115', fuel:'Diesel', oldPk:115, newPk:145},
+      {brand:'Ford', model:'Focus', generation:'Mk4 (2018–heden)', engine:'1.5 EcoBlue 120', fuel:'Diesel', oldPk:120, newPk:150},
+
+      // ===== OPEL =====
+      {brand:'Opel', model:'Astra', generation:'J (2009–2015)', engine:'1.4 Turbo 140', fuel:'Benzine', oldPk:140, newPk:175},
+      {brand:'Opel', model:'Astra', generation:'K (2015–2021)', engine:'1.6 CDTI 136', fuel:'Diesel', oldPk:136, newPk:170},
+
+      // ===== PEUGEOT =====
+      {brand:'Peugeot', model:'308', generation:'T9 (2013–2021)', engine:'1.6 BlueHDi 120', fuel:'Diesel', oldPk:120, newPk:155},
+      {brand:'Peugeot', model:'308', generation:'T9 (2013–2021)', engine:'1.2 PureTech 130', fuel:'Benzine', oldPk:130, newPk:155},
+
+      // ===== RENAULT =====
+      {brand:'Renault', model:'Clio', generation:'IV (2012–2019)', engine:'0.9 TCe 90', fuel:'Benzine', oldPk:90, newPk:110},
+      {brand:'Renault', model:'Clio', generation:'IV (2012–2019)', engine:'1.5 dCi 90', fuel:'Diesel', oldPk:90, newPk:120},
+      {brand:'Renault', model:'Mégane', generation:'III (2008–2016)', engine:'1.5 dCi 110', fuel:'Diesel', oldPk:110, newPk:140},
+      {brand:'Renault', model:'Mégane', generation:'IV (2016–2020)', engine:'1.3 TCe 140', fuel:'Benzine', oldPk:140, newPk:170},
+
+      // ===== VOLVO =====
+      {brand:'Volvo', model:'V40', generation:'P1 (2012–2019)', engine:'D2 1.6', fuel:'Diesel', oldPk:115, newPk:145},
+      {brand:'Volvo', model:'V40', generation:'P1 (2012–2019)', engine:'D3 2.0', fuel:'Diesel', oldPk:150, newPk:185},
+      {brand:'Volvo', model:'V60', generation:'P3 (2010–2018)', engine:'D4 2.0', fuel:'Diesel', oldPk:181, newPk:210},
+      {brand:'Volvo', model:'V60', generation:'SPA (2018–heden)', engine:'T5 2.0', fuel:'Benzine', oldPk:250, newPk:290},
 
       // ===== MINI (incl. R50/R53/R56) =====
-      {model:'MINI Hatch', generation:'R50 (2001–2006)', engine:'One 1.6', fuel:'Benzine', oldPk:90, newPk:100},
-      {model:'MINI Hatch', generation:'R50 (2001–2006)', engine:'Cooper 1.6', fuel:'Benzine', oldPk:116, newPk:125},
-      {model:'MINI Hatch', generation:'R53 (2002–2006)', engine:'Cooper S 1.6 Kompressor', fuel:'Benzine', oldPk:163, newPk:185},
-      {model:'MINI Hatch', generation:'R56 (2006–2013)', engine:'Cooper 1.6', fuel:'Benzine', oldPk:120, newPk:145},
-      {model:'MINI Hatch', generation:'R56 (2006–2013)', engine:'Cooper S 1.6 Turbo', fuel:'Benzine', oldPk:175, newPk:210},
-      {model:'MINI Hatch', generation:'F56 (2014–heden)', engine:'Cooper 1.5T', fuel:'Benzine', oldPk:136, newPk:175},
-      {model:'MINI Hatch', generation:'F56 (2014–heden)', engine:'Cooper S 2.0T', fuel:'Benzine', oldPk:192, newPk:235},
-
-      // ===== EXTRA DIESel-FOCUS VARIANTEN =====
-      {model:'Volkswagen Passat', generation:'B7 (2010–2014)', engine:'2.0 TDI 140', fuel:'Diesel', oldPk:140, newPk:180},
-      {model:'Volkswagen Passat', generation:'B8 (2014–heden)', engine:'2.0 TDI 150', fuel:'Diesel', oldPk:150, newPk:190},
-      {model:'Audi A6', generation:'C7 (2011–2018)', engine:'2.0 TDI 177', fuel:'Diesel', oldPk:177, newPk:210},
-      {model:'BMW 5-serie', generation:'F10 (2010–2017)', engine:'520d', fuel:'Diesel', oldPk:184, newPk:220},
-      {model:'Mercedes Sprinter', generation:'906 (2006–2018)', engine:'2.1 CDI 129', fuel:'Diesel', oldPk:129, newPk:165},
-      {model:'Mercedes Sprinter', generation:'907 (2018–heden)', engine:'2.1 CDI 163', fuel:'Diesel', oldPk:163, newPk:200},
+      {brand:'MINI', model:'Hatch', generation:'R50 (2001–2006)', engine:'One 1.6', fuel:'Benzine', oldPk:90, newPk:100},
+      {brand:'MINI', model:'Hatch', generation:'R50 (2001–2006)', engine:'Cooper 1.6', fuel:'Benzine', oldPk:116, newPk:125},
+      {brand:'MINI', model:'Hatch', generation:'R53 (2002–2006)', engine:'Cooper S 1.6 Kompressor', fuel:'Benzine', oldPk:163, newPk:185},
+      {brand:'MINI', model:'Hatch', generation:'R56 (2006–2013)', engine:'Cooper 1.6', fuel:'Benzine', oldPk:120, newPk:145},
+      {brand:'MINI', model:'Hatch', generation:'R56 (2006–2013)', engine:'Cooper S 1.6 Turbo', fuel:'Benzine', oldPk:175, newPk:210},
+      {brand:'MINI', model:'Hatch', generation:'F56 (2014–heden)', engine:'Cooper 1.5T', fuel:'Benzine', oldPk:136, newPk:175},
+      {brand:'MINI', model:'Hatch', generation:'F56 (2014–heden)', engine:'Cooper S 2.0T', fuel:'Benzine', oldPk:192, newPk:235},
     ];
 
-    // ======= UI / RENDERING =======
+    // ===== UI =====
     const rowsEl = document.getElementById('rows');
     const qEl = document.getElementById('q');
+    const brandFilterEl = document.getElementById('brandFilter');
     const modelFilterEl = document.getElementById('modelFilter');
     const fuelFilterEl = document.getElementById('fuelFilter');
     const resetBtn = document.getElementById('resetBtn');
-    const exportBtn = document.getElementById('exportCsv');
 
     function uniq(list){ return [...new Set(list)]; }
 
     function populateFilters(){
-      const models = uniq(DATA.map(x=>x.model));
-      modelFilterEl.innerHTML = '<option value="">Alle</option>' + models.map(m=>`<option>${m}</option>`).join('');
+      const brands = uniq(DATA.map(x=>x.brand)).sort();
+      brandFilterEl.innerHTML = '<option value="">Alle</option>' + brands.map(b=>`<option>${b}</option>`).join('');
+      updateModelOptions();
+    }
+
+    function updateModelOptions(){
+      const selBrand = brandFilterEl.value;
+      const modelsForBrand = uniq(DATA.filter(x=>!selBrand || x.brand===selBrand).map(x=>x.model)).sort();
+      const prev = modelFilterEl.value;
+      modelFilterEl.innerHTML = '<option value="">Alle</option>' + modelsForBrand.map(m=>`<option>${m}</option>`).join('');
+      if(modelsForBrand.includes(prev)) modelFilterEl.value = prev; else modelFilterEl.value = '';
     }
 
     function fmt(n){ return Number(n).toLocaleString('nl-NL'); }
 
     function render(){
       const q = qEl.value.trim().toLowerCase();
+      const brand = brandFilterEl.value;
       const model = modelFilterEl.value;
       const fuel = fuelFilterEl.value;
       const filtered = DATA.filter(x=>{
-        const hit = !q || `${x.model} ${x.generation} ${x.engine}`.toLowerCase().includes(q);
+        const hit = !q || `${x.brand} ${x.model} ${x.generation} ${x.engine}`.toLowerCase().includes(q);
+        const bf = !brand || x.brand === brand;
         const mf = !model || x.model === model;
         const ff = !fuel || x.fuel === fuel;
-        return hit && mf && ff;
+        return hit && bf && mf && ff;
       });
       rowsEl.innerHTML = filtered.map(x=>{
         const gain = x.newPk - x.oldPk;
         return `
           <tr class="odd:bg-white/[0.02] even:bg-transparent hover:bg-white/[0.04] transition">
+            <td class="px-3 py-3">${x.brand}</td>
             <td class="px-3 py-3">${x.model}</td>
             <td class="px-3 py-3">${x.generation}</td>
             <td class="px-3 py-3">${x.engine}</td>
@@ -313,34 +318,11 @@
       }).join('');
     }
 
-    function exportCSV(){
-      const header = ['Model','Generatie','Motor','Brandstof','Oud pk','Nieuw pk','+ pk'];
-      const q = qEl.value.trim().toLowerCase();
-      const model = modelFilterEl.value;
-      const fuel = fuelFilterEl.value;
-      const filtered = DATA.filter(x=>{
-        const hit = !q || `${x.model} ${x.generation} ${x.engine}`.toLowerCase().includes(q);
-        const mf = !model || x.model === model;
-        const ff = !fuel || x.fuel === fuel;
-        return hit && mf && ff;
-      });
-      const rows = filtered.map(x=>[
-        x.model, x.generation, x.engine, x.fuel, x.oldPk, x.newPk, (x.newPk - x.oldPk)
-      ]);
-      const csv = [header, ...rows].map(r=>r.map(v=>`"${String(v).replaceAll('"','\"')}"`).join(',')).join('\n');
-      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'midway-customs-caddy-transporter.csv';
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-    }
-
     qEl.addEventListener('input', render);
+    brandFilterEl.addEventListener('change', ()=>{ updateModelOptions(); render(); });
     modelFilterEl.addEventListener('change', render);
     fuelFilterEl.addEventListener('change', render);
-    resetBtn.addEventListener('click', ()=>{ qEl.value=''; modelFilterEl.value=''; fuelFilterEl.value=''; render(); });
-    exportBtn.addEventListener('click', exportCSV);
+    resetBtn.addEventListener('click', ()=>{ qEl.value=''; brandFilterEl.value=''; modelFilterEl.value=''; fuelFilterEl.value=''; updateModelOptions(); render(); });
 
     populateFilters();
     render();
